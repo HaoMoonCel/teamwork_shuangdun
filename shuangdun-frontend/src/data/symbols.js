@@ -1,0 +1,160 @@
+export const symbolCategories = [
+  { value: 'all', label: '全部' },
+  { value: '天文', label: '天文' },
+  { value: '地理', label: '地理' },
+  { value: '动植物', label: '动植物' },
+  { value: '生产生活', label: '生产生活' },
+  { value: '其他', label: '其他' },
+]
+
+export const formTypes = [
+  { value: 'all', label: '全部' },
+  { value: '象形', label: '象形' },
+  { value: '指事', label: '指事' },
+  { value: '会意', label: '会意' },
+]
+
+export const symbols = [
+  {
+    id: 'sd_001',
+    name: '日',
+    image: '/mock/symbols/placeholder.svg',
+    category: '天文',
+    formType: '象形',
+    description:
+      '双墩刻符中表示"日"的符号，呈圆形，内有短横或点，象征太阳的光芒。这一符号形态与甲骨文中的"日"字一脉相承。',
+    era: '新石器时代中期（约7300年前）',
+    source: '双墩遗址出土陶片（编号 SD-T-001）',
+  },
+  {
+    id: 'sd_002',
+    name: '月',
+    image: '/mock/symbols/placeholder.svg',
+    category: '天文',
+    formType: '象形',
+    description:
+      '表示"月"的符号，呈弯月形。双墩先民观察月相变化创造出此符号。',
+    era: '新石器时代中期（约7300年前）',
+    source: '双墩遗址出土陶片（编号 SD-T-002）',
+  },
+  {
+    id: 'sd_003',
+    name: '山',
+    image: '/mock/symbols/placeholder.svg',
+    category: '地理',
+    formType: '象形',
+    description:
+      '表示"山"的符号，由三个并列的三角形或弧线构成，描绘山峰连绵的形态。',
+    era: '新石器时代中期（约7300年前）',
+    source: '双墩遗址出土陶片（编号 SD-T-003）',
+  },
+  {
+    id: 'sd_004',
+    name: '水',
+    image: '/mock/symbols/placeholder.svg',
+    category: '地理',
+    formType: '象形',
+    description:
+      '表示"水"的符号，以波浪形线条表现流水意象。',
+    era: '新石器时代中期（约7300年前）',
+    source: '双墩遗址出土陶片（编号 SD-T-004）',
+  },
+  {
+    id: 'sd_005',
+    name: '鱼',
+    image: '/mock/symbols/placeholder.svg',
+    category: '动植物',
+    formType: '象形',
+    description:
+      '表示"鱼"的符号，保留鱼头、鱼身、鱼尾的基本轮廓，形态生动。',
+    era: '新石器时代中期（约7300年前）',
+    source: '双墩遗址出土陶片（编号 SD-T-005）',
+  },
+  {
+    id: 'sd_006',
+    name: '鹿',
+    image: '/mock/symbols/placeholder.svg',
+    category: '动植物',
+    formType: '象形',
+    description:
+      '表示"鹿"的符号，突出鹿角和细长的腿部特征。',
+    era: '新石器时代中期（约7300年前）',
+    source: '双墩遗址出土陶片（编号 SD-T-006）',
+  },
+  {
+    id: 'sd_007',
+    name: '木',
+    image: '/mock/symbols/placeholder.svg',
+    category: '动植物',
+    formType: '象形',
+    description:
+      '表示"木"或"树"的符号，上为枝下为根，结构清晰。',
+    era: '新石器时代中期（约7300年前）',
+    source: '双墩遗址出土陶片（编号 SD-T-007）',
+  },
+  {
+    id: 'sd_008',
+    name: '网',
+    image: '/mock/symbols/placeholder.svg',
+    category: '生产生活',
+    formType: '会意',
+    description:
+      '表示渔网的符号，由交叉线条组成网状图案，反映双墩先民的渔猎生活。',
+    era: '新石器时代中期（约7300年前）',
+    source: '双墩遗址出土陶片（编号 SD-T-008）',
+  },
+  {
+    id: 'sd_009',
+    name: '弓',
+    image: '/mock/symbols/placeholder.svg',
+    category: '生产生活',
+    formType: '象形',
+    description:
+      '表示弓箭的符号，呈弯曲的弓形，反映狩猎工具的刻画。',
+    era: '新石器时代中期（约7300年前）',
+    source: '双墩遗址出土陶片（编号 SD-T-009）',
+  },
+  {
+    id: 'sd_010',
+    name: '田',
+    image: '/mock/symbols/placeholder.svg',
+    category: '生产生活',
+    formType: '会意',
+    description:
+      '表示田地或区域的符号，由分格的矩形构成，反映原始农业活动。',
+    era: '新石器时代中期（约7300年前）',
+    source: '双墩遗址出土陶片（编号 SD-T-010）',
+  },
+  {
+    id: 'sd_011',
+    name: '云',
+    image: '/mock/symbols/placeholder.svg',
+    category: '天文',
+    formType: '象形',
+    description:
+      '表示云的符号，以卷曲线条表现云气缭绕的形态。',
+    era: '新石器时代中期（约7300年前）',
+    source: '双墩遗址出土陶片（编号 SD-T-011）',
+  },
+  {
+    id: 'sd_012',
+    name: '目',
+    image: '/mock/symbols/placeholder.svg',
+    category: '其他',
+    formType: '象形',
+    description:
+      '表示眼睛的符号，呈椭圆形内有圆点，与甲骨文"目"字形态接近。',
+    era: '新石器时代中期（约7300年前）',
+    source: '双墩遗址出土陶片（编号 SD-T-012）',
+  },
+]
+
+export function filterSymbols(symbols, category, formType) {
+  return symbols.filter((s) => {
+    const matchCat =
+      !category || category === 'all' || s.category === category
+    const matchForm =
+      !formType || formType === 'all' || s.formType === formType
+    return matchCat && matchForm
+  })
+}
