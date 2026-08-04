@@ -11,9 +11,14 @@ export default {
         ink: '#3C2415',
         'ink-light': '#7A6455',
         border: '#D4C5B2',
+        // 文博时间轴：赭石棕 / 浅金 / 浅赭石线
+        ochre: '#94673E',
+        gold: '#B9925F',
+        'ochre-line': '#CDB393',
       },
       fontFamily: {
         serif: ['"Noto Serif SC"', '"Source Han Serif SC"', 'serif'],
+        sans: ['"Noto Sans SC"', '"Source Han Sans SC"', '"PingFang SC"', 'system-ui', 'sans-serif'],
         ui: ['system-ui', 'sans-serif'],
       },
       backgroundImage: {

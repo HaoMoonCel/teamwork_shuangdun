@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeroSection />
-    <HistoryIntro />
+    <ChronologyTimeline />
     <FeatureCards />
     <UserGuide />
   </div>
@@ -9,7 +9,7 @@
 
 <script setup>
 import HeroSection from '@/components/home/HeroSection.vue'
-import HistoryIntro from '@/components/home/HistoryIntro.vue'
+import ChronologyTimeline from '@/components/home/ChronologyTimeline.vue'
 import FeatureCards from '@/components/home/FeatureCards.vue'
 import UserGuide from '@/components/home/UserGuide.vue'
 </script>
