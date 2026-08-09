@@ -7,7 +7,7 @@
       class="aspect-square bg-paper rounded overflow-hidden mb-3 flex items-center justify-center relative"
     >
       <img
-        :src="symbol.image"
+        :src="thumbnailUrl"
         :alt="symbol.name"
         class="w-3/4 h-3/4 object-contain group-hover:scale-110 transition-transform duration-300"
       />
@@ -27,8 +27,13 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue'
+import { getFirstDatasetImage } from '@/data/symbols.js'
+
+const props = defineProps({
   symbol: { type: Object, required: true },
 })
 defineEmits(['click'])
+
+const thumbnailUrl = computed(() => getFirstDatasetImage(props.symbol))
 </script>
