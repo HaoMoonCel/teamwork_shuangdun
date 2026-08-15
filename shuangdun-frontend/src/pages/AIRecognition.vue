@@ -23,9 +23,9 @@ import { ref, onMounted } from 'vue'
 import InputPanel from '@/components/ai/InputPanel.vue'
 import ResultPanel from '@/components/ai/ResultPanel.vue'
 import {
-  mockGetChars,
-  mockRecognize,
-  mockGenerate,
+  getChars,
+  recognize,
+  generate,
   normalizeRecognize,
   normalizeGenerate,
 } from '@/data/aiResults.js'
@@ -37,7 +37,7 @@ const view = ref(null)
 const supportedChars = ref([])
 
 onMounted(async () => {
-  const resp = await mockGetChars()
+  const resp = await getChars()
   supportedChars.value = resp.chars
 })
 
@@ -65,11 +65,11 @@ async function onSubmit(input) {
         }
         return
       }
-      const resp = await mockGenerate(char, 4)
+      const resp = await generate(char, 4)
       view.value = { mode: 'generate', data: normalizeGenerate(resp) }
     } else {
       if (!input.value) return
-      const resp = await mockRecognize(input.value)
+      const resp = await recognize(input.value)
       view.value = { mode: 'recognize', data: normalizeRecognize(resp) }
     }
   } catch (err) {
@@ -84,13 +84,13 @@ async function onSubmit(input) {
   }
 }
 
-/** 换一批：传新 seed 重新生成（契约 seed 语义：seed+count 避开上一组） */
+/** 换一批：传新 seed 重新生成（mock 按 seed 语义取另一组；真接口重新请求即生成新 seed） */
 async function onRegenerate() {
   if (!view.value || view.value.mode !== 'generate') return
   const { character, seed } = view.value.data
   loading.value = true
   try {
-    const resp = await mockGenerate(character, 4, seed + 8)
+    const resp = await generate(character, 4, seed + 8)
     view.value = { mode: 'generate', data: normalizeGenerate(resp) }
   } catch (err) {
     view.value = {

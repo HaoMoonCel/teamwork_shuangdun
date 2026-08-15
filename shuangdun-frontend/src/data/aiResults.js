@@ -1,5 +1,6 @@
 import { symbols } from './symbols.js'
 import { datasetFiles } from './datasetFiles.js'
+import { apiGetChars, apiRecognize, apiGenerate, isRealApiEnabled } from './aiApi.js'
 
 /**
  * AI 识别页 · 模拟数据层（M1 模拟版）
@@ -194,4 +195,31 @@ export function normalizeGenerate(resp) {
       src: `data:image/png;base64,${img.base64}`,
     })),
   }
+}
+
+// ===== 统一出口（页面只依赖 getChars/recognize/generate + normalize*）=====
+// 已配置真接口地址（VITE_AI_API_URL，见 .env.example）时自动走真算法，
+// 未配置则走上方模拟数据 —— M2 接入 = 配置地址，页面代码零改动。
+
+/** 当前是否走真算法 */
+export const useRealApi = isRealApiEnabled
+
+/** 字库同步（GET /api/chars ｜ mockGetChars） */
+export async function getChars() {
+  return isRealApiEnabled ? apiGetChars() : mockGetChars()
+}
+
+/** 刻符图 → 汉字识别（POST /api/recognize ｜ mockRecognize） */
+export async function recognize(imageFile) {
+  return isRealApiEnabled ? apiRecognize(imageFile) : mockRecognize(imageFile)
+}
+
+/**
+ * 汉字 → 刻符图生成（POST /api/generate ｜ mockGenerate）。
+ * 真接口暂不支持指定 seed（契约请求字段仅 character/count），seed 仅 mock 使用。
+ */
+export async function generate(character, count = 4, seed = null) {
+  return isRealApiEnabled
+    ? apiGenerate(character, count)
+    : mockGenerate(character, count, seed)
 }
