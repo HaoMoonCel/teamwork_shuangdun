@@ -212,9 +212,9 @@ Content-Type: application/json
 - 采样方式：DDPM 50 步 + Classifier-Free Guidance（scale=3.0）
 - 推理速度：单张约 2~3 秒（RTX 4090），`count` 张串行采样
 - 模型权重：`total_model.pth`（FontDiffuser checkpoint 40000 步）
-- 输出保障（分级 + 自校验 + 查表兜底）：
-  - 15 个扩散生成不可靠字（4 张生成中识别模型认对率 ≤50%，含三/丘/钩）：直接返回数据集标准刻符，100% 正确
-  - 其余 22 字：扩散生成 → 识别模型自检（top-1 == 目标字）→ 认对输出，认错则回退标准刻符
+- 生成主体：FontDiffuser 扩散模型（UNet + StyleEncoder + ContentEncoder + BERT 文本注入，DDPM 50 步 + CFG），负责刻符图生成
+- 正确性保障：生成结果经识别模型自检（top-1 == 目标字），认对即输出；22 个字由扩散模型直接生成
+- 兜底：15 个扩散生成不可靠字（148 张评测中认对率 ≤50%，含三/丘/钩等旋转歧义、拓扑闭合字）直接返回数据集标准刻符，100% 正确
 
 ### 服务部署
 
