@@ -26,6 +26,7 @@
       <TextInput
         v-else
         :disabled="disabled"
+        :supported-chars="supportedChars"
         @input-change="onInput"
       />
     </div>
@@ -48,6 +49,7 @@ import TextInput from './TextInput.vue'
 
 const props = defineProps({
   disabled: { type: Boolean, default: false },
+  supportedChars: { type: Array, default: () => [] },
 })
 const emit = defineEmits(['submit'])
 
