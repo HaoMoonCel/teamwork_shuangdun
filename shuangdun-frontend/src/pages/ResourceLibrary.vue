@@ -1,9 +1,41 @@
 <template>
-  <div class="page-section">
-    <h1 class="section-title">刻符资源库</h1>
-    <p class="section-subtitle">浏览双墩刻符数字档案</p>
+  <div class="page-section relative overflow-hidden">
+    <!-- 装饰背景刻符 -->
+    <div
+      class="absolute -top-8 -right-4 opacity-[0.04] select-none pointer-events-none leading-none"
+    >
+      <span class="text-[18rem] font-serif text-ink">刻</span>
+    </div>
+
+    <header class="relative text-center mb-10">
+      <p
+        class="flex items-center justify-center gap-3 text-[11px] font-ui uppercase tracking-[0.4em] text-ochre"
+      >
+        <span class="inline-block h-px w-6 bg-gold"></span>
+        <span>Shuangdun Symbol Archive</span>
+        <span class="inline-block h-px w-6 bg-gold"></span>
+      </p>
+      <h1
+        class="mt-4 text-4xl md:text-5xl font-serif font-bold text-ink tracking-[0.04em]"
+      >
+        刻符资源库
+      </h1>
+      <p class="mt-3 text-ink-light">浏览双墩刻符数字档案</p>
+      <span class="mt-5 mx-auto block h-[2px] w-10 bg-gold"></span>
+    </header>
 
     <FilterBar @filter-change="onFilterChange" />
+
+    <div class="flex items-center gap-3 mb-4">
+      <span class="h-px flex-1 bg-border"></span>
+      <p class="text-sm font-ui text-ink-light">
+        共
+        <strong class="text-terracotta font-serif text-base">{{ filteredSymbols.length }}</strong>
+        个刻符
+      </p>
+      <span class="h-px flex-1 bg-border"></span>
+    </div>
+
     <SymbolGrid :symbols="filteredSymbols" @select="openDetail" />
 
     <!-- Batch download -->

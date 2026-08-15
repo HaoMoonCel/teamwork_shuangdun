@@ -11,11 +11,18 @@
         >
           <!-- Header -->
           <div
-            class="sticky top-0 bg-cream flex justify-between items-center p-4 border-b border-border z-10"
+            class="sticky top-0 bg-cream flex justify-between items-center p-4 border-b border-gold/30 z-10"
           >
-            <h2 class="font-serif font-bold text-xl text-ink">
-              {{ symbol.name }}
-            </h2>
+            <div class="flex items-center gap-3">
+              <h2 class="font-serif font-bold text-xl text-ink">
+                {{ symbol.name }}
+              </h2>
+              <span
+                class="bg-seal text-cream text-xs px-1.5 py-1 rounded-sm font-serif leading-none tracking-widest"
+              >
+                {{ symbol.formType }}
+              </span>
+            </div>
             <button
               @click="$emit('close')"
               class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-paper transition-colors text-ink-light"
@@ -30,15 +37,22 @@
               <div class="space-y-4">
                 <div>
                   <span class="text-xs font-ui text-ink-light uppercase tracking-wider">释读名称</span>
-                  <p class="text-2xl font-serif font-bold text-ink">{{ symbol.name }}</p>
+                  <div class="flex items-center gap-3">
+                    <p class="text-2xl font-serif font-bold text-ink">{{ symbol.name }}</p>
+                    <span class="text-xs font-ui text-ink-light/70 border border-border rounded px-2 py-0.5">{{ symbol.id }}</span>
+                  </div>
                 </div>
                 <div>
                   <span class="text-xs font-ui text-ink-light uppercase tracking-wider">按意义分类</span>
-                  <p class="text-ink">{{ symbol.category }}</p>
+                  <p class="mt-1">
+                    <span class="inline-block bg-paper text-ink border border-border rounded-full px-3 py-0.5 text-sm font-ui">{{ symbol.category }}</span>
+                  </p>
                 </div>
                 <div>
                   <span class="text-xs font-ui text-ink-light uppercase tracking-wider">按形态分类</span>
-                  <p class="text-ink">{{ symbol.formType }}</p>
+                  <p class="mt-1">
+                    <span class="inline-block bg-terracotta/10 text-terracotta border border-terracotta/30 rounded-full px-3 py-0.5 text-sm font-ui">{{ symbol.formType }}</span>
+                  </p>
                 </div>
                 <div>
                   <span class="text-xs font-ui text-ink-light uppercase tracking-wider">年代</span>

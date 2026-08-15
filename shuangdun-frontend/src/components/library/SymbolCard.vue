@@ -1,28 +1,33 @@
 <template>
   <div
-    class="card p-4 cursor-pointer group hover:border-terracotta transition-all duration-300"
+    class="card p-4 cursor-pointer group hover:border-gold hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
     @click="$emit('click', symbol)"
   >
     <div
-      class="aspect-square bg-paper rounded overflow-hidden mb-3 flex items-center justify-center relative"
+      class="aspect-square bg-paper/60 rounded-md overflow-hidden mb-3 flex items-center justify-center relative border border-border/50 group-hover:border-gold/50 transition-colors"
     >
       <img
         :src="thumbnailUrl"
         :alt="symbol.name"
-        class="w-3/4 h-3/4 object-contain group-hover:scale-110 transition-transform duration-300"
+        class="w-[70%] h-[70%] object-contain group-hover:scale-110 transition-transform duration-500"
       />
-      <div
-        class="absolute top-2 right-2 bg-terracotta/80 text-cream text-xs px-2 py-0.5 rounded font-ui"
+      <!-- 形态分类印章 -->
+      <span
+        class="absolute top-2 right-2 bg-seal text-cream text-xs px-1.5 py-1 rounded-sm font-serif leading-none tracking-widest shadow-sm"
       >
         {{ symbol.formType }}
-      </div>
+      </span>
     </div>
-    <h3 class="font-serif font-bold text-lg text-ink text-center">
-      {{ symbol.name }}
-    </h3>
-    <p class="text-ink-light text-xs text-center mt-1 font-ui">
-      {{ symbol.category }}
-    </p>
+    <div class="text-center">
+      <h3
+        class="font-serif font-bold text-xl text-ink group-hover:text-terracotta transition-colors"
+      >
+        {{ symbol.name }}
+      </h3>
+      <p class="text-ink-light/70 text-xs mt-1.5 font-ui tracking-wider">
+        {{ symbol.category }}
+      </p>
+    </div>
   </div>
 </template>
 
