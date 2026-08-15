@@ -203,15 +203,18 @@ Content-Type: application/json
 - 流程：96×96 输入 → ContentEncoder 提取 256 维视觉特征 → MLP 映射到 37 字符概率分布 → softmax → 取 top-3
 - 推理速度：单次前向约 5~15ms
 - 模型权重：
-  - ContentEncoder：`content_encoder.pth`（FontDiffuser checkpoint 15000 步）
-  - 分类头：`classifier_head.pth`（v8，验证准确率 89.64%）
+  - ContentEncoder：`content_encoder.pth`（FontDiffuser checkpoint 40000 步）
+  - 分类头：`classifier_head.pth`（验证准确率 90.99%）
 
 ### 生成端点（POST /api/generate）
 
 - 模型架构：FontDiffuser（UNet + StyleEncoder + ContentEncoder + BERT 文本注入）
 - 采样方式：DDPM 50 步 + Classifier-Free Guidance（scale=3.0）
 - 推理速度：单张约 2~3 秒（RTX 4090），`count` 张串行采样
-- 模型权重：`total_model.pth`（FontDiffuser checkpoint 15000 步）
+- 模型权重：`total_model.pth`（FontDiffuser checkpoint 40000 步）
+- 输出保障（分级 + 自校验 + 查表兜底）：
+  - 15 个扩散生成不可靠字（4 张生成中识别模型认对率 ≤50%，含三/丘/钩）：直接返回数据集标准刻符，100% 正确
+  - 其余 22 字：扩散生成 → 识别模型自检（top-1 == 目标字）→ 认对输出，认错则回退标准刻符
 
 ### 服务部署
 
