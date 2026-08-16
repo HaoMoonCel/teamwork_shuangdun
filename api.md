@@ -1,6 +1,6 @@
 # API 接口约定
 
-> 字符翻译算法（杨）· M1 交付物 · v1.1 · 2026-08-12
+> 字符翻译算法（杨）· M1 交付物 · v1.2 · 2026-08-16
 
 ---
 
@@ -211,10 +211,10 @@ Content-Type: application/json
 - 模型架构：FontDiffuser（UNet + StyleEncoder + ContentEncoder + BERT 文本注入）
 - 采样方式：DDPM 50 步 + Classifier-Free Guidance（scale=3.0）
 - 推理速度：单张约 2~3 秒（RTX 4090），`count` 张串行采样
-- 模型权重：`total_model.pth`（FontDiffuser checkpoint 40000 步）
+- 模型权重：`total_model.pth`（FontDiffuser checkpoint 150000 步，生成自检通过率 79.05%）
 - 生成主体：FontDiffuser 扩散模型（UNet + StyleEncoder + ContentEncoder + BERT 文本注入，DDPM 50 步 + CFG），负责刻符图生成
-- 正确性保障：生成结果经识别模型自检（top-1 == 目标字），认对即输出；22 个字由扩散模型直接生成
-- 兜底：15 个扩散生成不可靠字（148 张评测中认对率 ≤50%，含三/丘/钩等旋转歧义、拓扑闭合字）直接返回数据集标准刻符，100% 正确
+- 正确性保障：生成结果经识别模型自检（top-1 == 目标字），认对即输出；28 个字由扩散模型直接生成
+- 回退策略：9 个字（仓、八、根、矢、花、山、房、甲、草）扩散生成后识别自检认对率 ≤50%，直接回退返回数据集标准刻符，100% 正确
 
 ### 服务部署
 
