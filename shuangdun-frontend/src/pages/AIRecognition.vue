@@ -12,6 +12,7 @@
       <ResultPanel
         :view="view"
         :loading="loading"
+        :pending-mode="pendingMode"
         @regenerate="onRegenerate"
       />
     </div>
@@ -33,6 +34,8 @@ import {
 const loading = ref(false)
 // 统一结果视图：{ mode: 'recognize' | 'generate' | 'error', data }
 const view = ref(null)
+// 当前请求类型（loading 文案区分：生成慢约 9s，识别快约几十 ms）
+const pendingMode = ref(null)
 // 可用字库（契约第七节注意事项 6：首次加载同步 /api/chars，过滤输入面板）
 const supportedChars = ref([])
 
@@ -43,6 +46,7 @@ onMounted(async () => {
 
 async function onSubmit(input) {
   loading.value = true
+  pendingMode.value = input.type === 'text' ? 'generate' : 'recognize'
   view.value = null
   try {
     if (input.type === 'text') {
@@ -89,6 +93,7 @@ async function onRegenerate() {
   if (!view.value || view.value.mode !== 'generate') return
   const { character, seed } = view.value.data
   loading.value = true
+  pendingMode.value = 'generate'
   try {
     const resp = await generate(character, 4, seed + 8)
     view.value = { mode: 'generate', data: normalizeGenerate(resp) }

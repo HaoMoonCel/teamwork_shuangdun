@@ -23,9 +23,15 @@
           class="absolute inset-0 border-4 border-transparent border-t-terracotta rounded-full animate-spin"
         ></div>
       </div>
-      <p class="text-ink-light font-ui">AI 正在分析中...</p>
+      <p class="text-ink-light font-ui">
+        {{ pendingMode === 'generate' ? 'AI 正在生成刻符图...' : 'AI 正在识别...' }}
+      </p>
       <p class="text-xs text-ink-light/60 mt-2 font-ui">
-        正在匹配双墩刻符数据库
+        {{
+          pendingMode === 'generate'
+            ? '扩散模型逐张采样，4 张约需 9 秒，请稍候'
+            : '正在匹配双墩刻符数据库'
+        }}
       </p>
     </div>
 
@@ -93,6 +99,7 @@ import GenerateResult from './GenerateResult.vue'
 const props = defineProps({
   view: { type: Object, default: null },
   loading: { type: Boolean, default: false },
+  pendingMode: { type: String, default: null },
 })
 defineEmits(['regenerate'])
 
