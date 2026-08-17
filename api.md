@@ -157,11 +157,11 @@ Content-Type: application/json
 
 | count | 预估耗时 |
 |------|------|
-| 1 | ~2.3 秒 |
-| 4 | ~9 秒 |
-| 8 | ~18~24 秒 |
+| 1 | ~3.5 秒 |
+| 4 | ~5 秒 |
+| 8 | ~5 秒 |
 
-单实例串行处理请求。并发请求排队执行，后续请求需等待前序完成。
+`count` 张采用 batch 并行采样（一次前向），count 增大边际耗时降低。单实例处理请求，并发请求排队执行。
 
 ### seed 语义
 
@@ -210,7 +210,7 @@ Content-Type: application/json
 
 - 模型架构：FontDiffuser（UNet + StyleEncoder + ContentEncoder + BERT 文本注入）
 - 采样方式：DDPM 50 步 + Classifier-Free Guidance（scale=3.0）
-- 推理速度：单张约 2~3 秒（RTX 4090），`count` 张串行采样
+- 推理速度：`count` 张 batch 并行采样，4 张约 3.5 秒、8 张约 4.5 秒（RTX 4090，纯采样）
 - 模型权重：`total_model.pth`（FontDiffuser checkpoint 150000 步，生成自检通过率 79.05%）
 - 生成主体：FontDiffuser 扩散模型（UNet + StyleEncoder + ContentEncoder + BERT 文本注入，DDPM 50 步 + CFG），负责刻符图生成
 - 正确性保障：生成结果经识别模型自检（top-1 == 目标字），认对即输出；28 个字由扩散模型直接生成
