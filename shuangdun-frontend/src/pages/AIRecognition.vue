@@ -1,20 +1,34 @@
 <template>
-  <div class="page-section">
-    <h1 class="section-title">AI 智能识别</h1>
-    <p class="section-subtitle">输入汉字，匹配双墩刻符</p>
+  <div class="ai-page relative isolate min-h-[calc(100vh-6.25rem)] overflow-hidden">
+    <!-- 背景：4.jpg（刻符浅浮雕） + 暖色渐变叠加，留出可读性 -->
+    <div
+      class="ai-bg absolute inset-0 -z-10 bg-no-repeat bg-cover bg-center"
+      aria-hidden="true"
+    ></div>
+    <div
+      class="absolute inset-0 -z-10 pointer-events-none"
+      aria-hidden="true"
+      style="background:
+        linear-gradient(180deg, rgba(220,198,162,0.92) 0%, rgba(195,161,124,0.5) 45%, rgba(180,140,100,0.1) 100%);"
+    ></div>
 
-    <div class="grid lg:grid-cols-2 gap-8 min-h-[600px]">
-      <InputPanel
-        :disabled="loading"
-        :supported-chars="supportedChars"
-        @submit="onSubmit"
-      />
-      <ResultPanel
-        :view="view"
-        :loading="loading"
-        :pending-mode="pendingMode"
-        @regenerate="onRegenerate"
-      />
+    <div class="page-section lg:max-w-[96rem] relative">
+      <h1 class="section-title">刻符识别</h1>
+      <p class="section-subtitle">输入汉字或上传刻符图片，AI将匹配相似双墩刻符</p>
+
+      <div class="grid lg:grid-cols-2 gap-8 min-h-[600px] lg:min-h-[calc(100vh-24rem)]">
+        <InputPanel
+          :disabled="loading"
+          :supported-chars="supportedChars"
+          @submit="onSubmit"
+        />
+        <ResultPanel
+          :view="view"
+          :loading="loading"
+          :pending-mode="pendingMode"
+          @regenerate="onRegenerate"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -23,12 +37,14 @@
 import { ref, onMounted } from 'vue'
 import InputPanel from '@/components/ai/InputPanel.vue'
 import ResultPanel from '@/components/ai/ResultPanel.vue'
+import aiBg from '../../pic/4.jpg'
 import {
   getChars,
   recognize,
   generate,
   normalizeRecognize,
   normalizeGenerate,
+  SUPPORTED_CHARS,
 } from '@/data/aiResults.js'
 
 const loading = ref(false)
@@ -36,12 +52,16 @@ const loading = ref(false)
 const view = ref(null)
 // 当前请求类型（loading 文案区分：生成慢约 9s，识别快约几十 ms）
 const pendingMode = ref(null)
-// 可用字库（契约第七节注意事项 6：首次加载同步 /api/chars，过滤输入面板）
-const supportedChars = ref([])
-
+// 可用字库（契约固定 37 字）：先本地立即渲染，后端可达时再同步校准，
+// 避免后端未启动时文字输入面板无字可选
+const supportedChars = ref([...SUPPORTED_CHARS])
 onMounted(async () => {
-  const resp = await getChars()
-  supportedChars.value = resp.chars
+  try {
+    const resp = await getChars()
+    if (resp?.chars?.length) supportedChars.value = resp.chars
+  } catch {
+    // 后端不可达：保留本地字库，页面功能不中断
+  }
 })
 
 async function onSubmit(input) {
@@ -109,3 +129,15 @@ async function onRegenerate() {
   }
 }
 </script>
+
+<style scoped>
+/* 4.jpg 作为页面壁纸，背景层置于内容之下（-z-10） */
+.ai-bg {
+  background-image: url('../../pic/4.jpg');
+  background-size: 108% 108%;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* 让中间的刻符纹样不抢视觉焦点，略微柔化 */
+  filter: saturate(0.9) brightness(1.02);
+}
+</style>

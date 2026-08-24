@@ -11,7 +11,7 @@ import { apiGetChars, apiRecognize, apiGenerate, isRealApiEnabled } from './aiAp
  *   mockGenerate    ↔ POST /api/generate   —— 汉字 → 刻符图
  *
  * M2 接入真算法时：只把 mock* 实现换成真实 fetch（形状不变），
- * normalize* 与页面代码保持不变，即「只换数据源，不动页面结构」。
+ * normalize* 与页面代码保持不变，即“只换数据源，不动页面结构”。
  */
 
 // ===== 模拟配置 =====
@@ -106,8 +106,8 @@ export async function mockGenerate(character, count = 4, seed = null) {
 
 /**
  * 演示技巧（仅模拟层）：
- * - 上传文件名形如「日_0001_hand.png」（数据集文件）时，按文件名前缀返回该字为 top-1
- *   高置信，演示「识别对了」的效果；
+ * - 上传文件名形如“日_0001_hand.png”（数据集文件）时，按文件名前缀返回该字为 top-1
+ *   高置信，演示“识别对了”的效果；
  * - 文件名含 "uncertain" 强制返回 uncertain 状态，便于可控演示 top-3 确认流程；
  * - 其余情况随机 top-3，并有一定概率触发 uncertain。
  *

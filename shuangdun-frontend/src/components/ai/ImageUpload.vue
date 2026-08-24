@@ -5,9 +5,21 @@
       @dragover.prevent
       @drop.prevent="onDrop"
     >
-      <div class="text-5xl">🖼️</div>
+      <!-- 刻符风线稿图标（无 emoji） -->
+      <svg
+        viewBox="0 0 32 32"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        class="h-14 w-14 text-terracotta"
+        aria-hidden="true"
+      >
+        <circle cx="16" cy="16" r="7" />
+        <path d="M16 4v3M16 25v3M4 16h3M25 16h3M7.9 7.9l2.1 2.1M22 22l2.1 2.1M24.1 7.9L22 10M10 22l-2.1 2.1" />
+        <path d="M12 19l4-6 4 6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
       <p class="text-ink-light font-ui">拖拽图像到此处，或点击上传</p>
-      <p class="text-xs text-ink-light/60 font-ui">支持 JPG、PNG 格式</p>
+      <p class="text-xs text-ink/80 font-ui">支持 JPG、PNG 格式</p>
       <input
         type="file"
         accept="image/jpeg,image/png"
@@ -24,8 +36,8 @@
       />
       <p class="text-xs text-ink-light mt-2 font-ui">已选择：{{ fileName }}</p>
     </div>
-    <p class="text-xs text-ink-light/60 mt-3 font-ui">
-      💡 提示：建议上传清晰的刻符照片或手绘图形，背景尽量简洁
+    <p class="text-xs text-ink/80 mt-3 font-ui">
+      提示：建议上传清晰的刻符照片或手绘图形，背景尽量简洁
     </p>
   </div>
 </template>

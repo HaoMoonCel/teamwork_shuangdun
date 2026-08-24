@@ -57,8 +57,8 @@ const activeTab = ref('text')
 const currentInput = ref(null)
 
 const tabs = [
-  { key: 'text', label: '📝 文字输入' },
-  { key: 'image', label: '📷 图像上传' },
+  { key: 'text', label: '文字输入' },
+  { key: 'image', label: '图像上传' },
 ]
 
 const canSubmit = computed(() => {

@@ -76,7 +76,7 @@ export async function apiRecognize(imageFile) {
  * POST /api/generate —— 汉字 → 刻符图（application/json）
  *
  * 注意：契约请求字段仅 character / count，seed 目前是响应回显字段，
- * 「换一批」= 重新请求（服务端生成新 seed）。
+ * “换一批”= 重新请求（服务端生成新 seed）。
  * 若杨后续把 seed 开放为可选请求参数（用于复现/指定种子），在此把 seed
  * 追加进请求体即可，页面与 aiResults.js 无需改动。
  */

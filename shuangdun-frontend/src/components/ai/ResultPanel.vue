@@ -5,10 +5,21 @@
       v-if="!loading && !view"
       class="h-full flex flex-col items-center justify-center text-center py-16"
     >
-      <div class="text-6xl mb-4">🔍</div>
-      <h3 class="font-serif font-bold text-xl text-ink mb-2">等待识别</h3>
+      <!-- 刻符风线稿图标（无 emoji） -->
+      <svg
+        viewBox="0 0 32 32"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.4"
+        class="h-16 w-16 mb-4 text-terracotta/70"
+        aria-hidden="true"
+      >
+        <circle cx="16" cy="16" r="6.5" />
+        <path d="M16 4.5v2.5M16 25v2.5M4.5 16H7M25 16h2.5M8 8l1.8 1.8M22.2 22.2 24 24M24 8l-1.8 1.8M10 22.2 8 24" />
+      </svg>
+      <h3 class="font-serif font-bold text-xl text-ink mb-2">等待比对</h3>
       <p class="text-ink-light text-sm font-ui">
-        在左侧输入汉字或上传图像，<br />AI 将为您匹配最相似的双墩刻符。
+        在左侧输入汉字或上传图像，<br />将为您比对最相似的双墩刻符。
       </p>
     </div>
 
@@ -26,7 +37,7 @@
       <p class="text-ink-light font-ui">
         {{ pendingMode === 'generate' ? 'AI 正在生成刻符图...' : 'AI 正在识别...' }}
       </p>
-      <p class="text-xs text-ink-light/60 mt-2 font-ui">
+      <p class="text-xs text-ink/80 mt-2 font-ui">
         {{
           pendingMode === 'generate'
             ? '扩散模型逐张采样，4 张约需 9 秒，请稍候'
@@ -40,7 +51,6 @@
       v-if="!loading && view?.mode === 'error'"
       class="h-full flex flex-col items-center justify-center text-center py-16"
     >
-      <div class="text-5xl mb-4">⚠️</div>
       <h3 class="font-serif font-bold text-lg text-ink mb-2">请求失败</h3>
       <p class="text-ink-light text-sm font-ui mb-3">
         {{ view.error.message }}
@@ -62,7 +72,7 @@
         class="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3"
       >
         <p class="text-sm font-ui text-amber-900">
-          ⚠️ 识别置信度较低（top-1
+          识别置信度较低（top-1
           {{ (view.data.results[0].confidence * 100).toFixed(0) }}%），请点击选择最符合的字符
         </p>
       </div>
@@ -79,8 +89,8 @@
           @select="selectedChar = result.char"
         />
       </TransitionGroup>
-      <p class="text-xs text-ink-light/60 text-center mt-4 font-ui">
-        ⚡ 推理耗时 {{ view.data.queryTimeMs }}ms ｜ ⚠️ 以上为 AI 模型匹配结果，仅供参考
+      <p class="text-xs text-ink/80 text-center mt-4 font-ui">
+        推理耗时 {{ view.data.queryTimeMs }}ms ｜ 以上为 AI 模型匹配结果，仅供参考
       </p>
     </div>
 

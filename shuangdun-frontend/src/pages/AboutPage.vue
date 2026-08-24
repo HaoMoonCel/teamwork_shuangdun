@@ -1,101 +1,80 @@
 <template>
-  <div class="page-section max-w-3xl mx-auto">
+  <div class="page-section max-w-5xl mx-auto">
     <h1 class="section-title">关于项目</h1>
     <p class="section-subtitle">双墩刻符 AI 破译计划</p>
 
     <!-- Project background -->
     <div class="card p-8 mb-8">
-      <h2 class="text-xl font-serif font-bold text-terracotta mb-4">
-        🎯 项目背景
-      </h2>
-      <div class="space-y-4 text-ink-light leading-relaxed">
+      <h2 class="text-xl font-sans font-bold text-terracotta mb-4">项目背景</h2>
+      <div class="space-y-4 text-ink-light leading-relaxed" style="text-wrap: pretty">
         <p>
-          本项目的核心目标有二：其一，响应中华文明探源工程对早期文字研究的支持需求，
-          通过数字化手段为双墩刻符这一珍贵文化遗产建立标准化的数字档案，
-          避免因文物本体年代久远、面临损毁风险而导致的文化信息流失。
+          本项目的核心目标有二：其一，响应中华文明探源工程对早期文字研究的支持需求，通过数字化手段为双墩刻符这一珍贵文化遗产建立标准化的数字档案，避免因文物本体年代久远、面临损毁风险而导致的文化信息流失。
         </p>
         <p>
-          其二，针对双墩刻符尚未完全破译且公众知晓度低的现状，
-          本项目基于条件扩散模型等核心算法，训练 AI
-          理解双墩刻符与现代汉字之间的映射关系，
-          构建集文化科普与 AI
-          互动于一体的网站，将学术研究成果转化为公众易于参与的趣味体验。
+          其二，针对双墩刻符尚未完全破译且公众知晓度低的现状，本项目基于条件扩散模型等核心算法，训练 AI 理解双墩刻符与现代汉字之间的映射关系，构建集文化科普与 AI 互动于一体的网站，将学术研究成果转化为公众易于参与的趣味体验。
         </p>
       </div>
     </div>
 
     <!-- Data declaration -->
     <div class="card p-8 mb-8">
-      <h2 class="text-xl font-serif font-bold text-terracotta mb-4">
-        📋 数据声明
-      </h2>
-      <div class="space-y-3 text-ink-light leading-relaxed text-sm">
+      <h2 class="text-xl font-sans font-bold text-terracotta mb-4">数据声明</h2>
+      <div class="space-y-3 text-ink-light leading-relaxed" style="text-wrap: pretty">
         <p>
           <strong class="text-ink">素材来源：</strong>
-          所有原始图像资料均来自正式考古发掘记录、学术论文及公开出版的权威著作，
-          版权归相关文博单位所有。
+          所有原始图像资料均来自正式考古发掘记录、学术论文及公开出版的权威著作，版权归相关文博单位所有。
         </p>
         <p>
           <strong class="text-ink">使用规范：</strong>
-          本站所有内容禁止用于商业用途。在学术研究、科普传播中引用时，
-          须注明「双墩刻符数据库」来源。
+          本站所有内容禁止用于商业用途。在学术研究、科普传播中引用时，须注明“双墩刻符数据库”来源。
         </p>
         <p>
           <strong class="text-ink">技术声明：</strong>
-          AI
-          识别结果基于条件扩散模型生成，仅供参考研究使用， 不构成正式的考古学释读结论。
+          AI 识别结果基于条件扩散模型生成，仅供参考研究使用，不构成正式的考古学释读结论。
         </p>
       </div>
     </div>
 
     <!-- Team -->
     <div class="card p-8">
-      <h2 class="text-xl font-serif font-bold text-terracotta mb-6">
-        👥 项目团队
-      </h2>
+      <h2 class="text-xl font-sans font-bold text-terracotta mb-6">项目团队</h2>
       <div class="grid sm:grid-cols-2 gap-6">
         <div class="text-center p-4">
           <div
-            class="w-16 h-16 mx-auto mb-3 rounded-full bg-terracotta/10 text-terracotta flex items-center justify-center text-xl font-serif font-bold"
+            class="w-16 h-16 mx-auto mb-3 rounded-full bg-terracotta/10 text-terracotta flex items-center justify-center text-xl font-sans font-bold"
           >
             杨
           </div>
-          <p class="font-serif font-bold text-ink">杨天瑞</p>
-          <p class="text-xs text-ink-light mt-1 font-ui">模型训练</p>
+          <p class="font-sans font-bold text-ink">杨天瑞</p>
+          <p class="text-xs text-ink-light mt-1 font-sans">模型训练</p>
         </div>
         <div class="text-center p-4">
           <div
-            class="w-16 h-16 mx-auto mb-3 rounded-full bg-terracotta/10 text-terracotta flex items-center justify-center text-xl font-serif font-bold"
+            class="w-16 h-16 mx-auto mb-3 rounded-full bg-terracotta/10 text-terracotta flex items-center justify-center text-xl font-sans font-bold"
           >
             曾
           </div>
-          <p class="font-serif font-bold text-ink">曾庆皓</p>
-          <p class="text-xs text-ink-light mt-1 font-ui">前端与后端开发</p>
+          <p class="font-sans font-bold text-ink">曾庆皓</p>
+          <p class="text-xs text-ink-light mt-1 font-sans">前端与后端开发</p>
         </div>
         <div class="text-center p-4">
           <div
-            class="w-16 h-16 mx-auto mb-3 rounded-full bg-terracotta/10 text-terracotta flex items-center justify-center text-xl font-serif font-bold"
+            class="w-16 h-16 mx-auto mb-3 rounded-full bg-terracotta/10 text-terracotta flex items-center justify-center text-xl font-sans font-bold"
           >
             牛
           </div>
-          <p class="font-serif font-bold text-ink">牛鹤霖</p>
-          <p class="text-xs text-ink-light mt-1 font-ui">功能设计</p>
+          <p class="font-sans font-bold text-ink">牛鹤霖</p>
+          <p class="text-xs text-ink-light mt-1 font-sans">功能设计</p>
         </div>
         <div class="text-center p-4">
           <div
-            class="w-16 h-16 mx-auto mb-3 rounded-full bg-terracotta/10 text-terracotta flex items-center justify-center text-xl font-serif font-bold"
+            class="w-16 h-16 mx-auto mb-3 rounded-full bg-terracotta/10 text-terracotta flex items-center justify-center text-xl font-sans font-bold"
           >
             郭
           </div>
-          <p class="font-serif font-bold text-ink">郭怡嘉</p>
-          <p class="text-xs text-ink-light mt-1 font-ui">数据采集</p>
+          <p class="font-sans font-bold text-ink">郭怡嘉</p>
+          <p class="text-xs text-ink-light mt-1 font-sans">数据采集</p>
         </div>
-      </div>
-      <div class="mt-6 pt-6 border-t border-border text-center">
-        <p class="text-sm text-ink-light font-ui">
-          指导教师：<span class="text-ink font-serif">赵洋</span>
-          &nbsp;&nbsp;教授 · 合肥工业大学计算机与信息学院
-        </p>
       </div>
     </div>
   </div>

@@ -1,159 +1,89 @@
 <template>
-  <section class="chronology-module bg-paper font-sans text-ink">
-    <div class="mx-auto max-w-[1120px] px-8 py-16 sm:px-12">
-      <!-- 模块标题 + 右上角翻页控件 -->
-      <div class="flex items-start justify-between gap-8">
-        <header>
-          <p class="flex items-center gap-2.5 text-[11px] font-medium uppercase tracking-[0.4em] text-ochre">
-            <svg
-              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-              stroke-linecap="round" stroke-linejoin="round" class="h-3 w-3 shrink-0"
-              v-html="GLYPHS.sun" aria-hidden="true"
-            ></svg>
-            <span>Chronology of Shuangdun Site</span>
-          </p>
-          <h2 class="mt-4 text-[32px] font-bold leading-tight tracking-[0.04em]">双墩遗址考古大事记</h2>
-          <span class="mt-5 block h-[2px] w-10 bg-gold" aria-hidden="true"></span>
-        </header>
+  <section
+    class="chronology-module font-sans text-ink relative overflow-hidden min-h-screen flex flex-col"
+  >
+    <!-- 背景图：右缘刻符 + 暖光渐变（只作氛围） -->
+    <img
+      :src="timelineImage"
+      alt=""
+      class="chronology-bg-image"
+      aria-hidden="true"
+    />
 
-        <div class="flex gap-3 pt-1">
-          <button
-            type="button"
-            class="flex h-10 w-10 items-center justify-center rounded-full border-[1.5px] border-ink/20 text-ink/70 transition-colors duration-200 hover:border-ochre hover:text-ochre disabled:cursor-not-allowed disabled:opacity-25"
-            :disabled="current === 0"
-            aria-label="上一个节点"
-            @click="step(-1)"
-          >
-            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14.5 5.5 8 12l6.5 6.5" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            class="flex h-10 w-10 items-center justify-center rounded-full border-[1.5px] border-ink/20 text-ink/70 transition-colors duration-200 hover:border-ochre hover:text-ochre disabled:cursor-not-allowed disabled:opacity-25"
-            :disabled="current === items.length - 1"
-            aria-label="下一个节点"
-            @click="step(1)"
-          >
-            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9.5 5.5 16 12l-6.5 6.5" />
-            </svg>
-          </button>
-        </div>
-      </div>
+    <div class="relative mx-auto w-full max-w-[126rem] px-8 py-10 sm:px-12 md:py-14 flex-1 flex flex-col justify-start">
+      <!-- 模块标题（左对齐） -->
+      <header>
+        <p class="flex items-center gap-2.5 text-[1.2rem] font-medium uppercase tracking-[0.4em] text-ochre">
+          <svg
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0"
+            v-html="GLYPHS.sun" aria-hidden="true"
+          ></svg>
+          <span>Chronology of Shuangdun Site</span>
+        </p>
+        <h2 class="mt-4 text-[2.5rem] font-bold leading-tight tracking-[0.04em] font-sans">双墩遗址考古大事记</h2>
+        <span class="mt-4 block h-[0.2rem] w-12 bg-gold" aria-hidden="true"></span>
+      </header>
 
-      <!-- 横向时间轴：全部节点按时间顺序铺开 -->
-      <div class="no-scrollbar mt-14 overflow-x-auto" ref="scrollWrap" @scroll="onScroll">
+      <!-- 时间轴：垂直居中在标题下方的模块中部 -->
+      <div class="flex-1 flex flex-col justify-center mt-4">
+      <!-- 水平时间轴：直线主线 + 圆形节点，信息直接附着节点 -->
+      <div class="arc-stage relative" ref="arcStage" :style="{ height: stageH + 'px' }">
+        <!-- 整条轨道：横向滑动 -->
         <div
-          ref="axisWrap"
-          tabindex="0"
-          role="region"
-          aria-label="双墩遗址考古大事记时间轴"
-          class="relative h-[58px] min-w-[1200px] outline-none"
-          @keydown.left.prevent="step(-1)"
-          @keydown.right.prevent="step(1)"
+          class="arc-track"
+          :style="{ width: trackW + 'px', transform: `translateX(${trackX}px)` }"
         >
-          <!-- 轴线 -->
-          <div class="pointer-events-none absolute left-0 right-0 top-[9px] h-px bg-ochre-line"></div>
+          <!-- 时间主线：淡赭石细实线 -->
+          <div class="timeline-line" :style="{ top: nodeY + 'px' }" aria-hidden="true"></div>
 
-          <!-- 走过的路：1985 → 当前节点 -->
-          <div class="progress-line pointer-events-none absolute top-[9px] h-px bg-gold" :style="progressStyle" aria-hidden="true"></div>
-
-          <!-- 节点 + 年份 -->
-          <div
+          <!-- 年份节点：窗口式卡片沿主线上/下交替排布 -->
+          <button
             v-for="(item, i) in items"
             :key="item.year"
-            class="absolute top-0 flex w-0 flex-col items-center"
-            :style="{ left: pos[i] + 'px' }"
+            type="button"
+            class="arc-node"
+            :class="[
+              cardClass(i),
+              { 'is-active': i === current },
+              'is-above',
+            ]"
+            :style="nodeStyle(i)"
+            :aria-label="`查看 ${item.year} ${item.title}`"
+            @click="current = i"
           >
-            <button
-              type="button"
-              class="flex rounded-full border-[1.5px] bg-paper transition-colors duration-200"
-              :class="[
-                i === current ? 'border-gold bg-gold' : 'border-gold hover:border-ochre',
-                item.milestone ? 'h-[22px] w-[22px]' : 'h-[16px] w-[16px]',
-              ]"
-              :aria-label="`查看 ${item.year} ${item.title}`"
-              @click="current = i"
-            ></button>
-            <span
-              class="mt-[7px] whitespace-nowrap text-[11px] transition-colors duration-300"
-              :class="i === current ? 'font-medium text-ochre' : 'text-ink/55'"
-            >{{ item.year }}</span>
-          </div>
-
-          <!-- 金色选择环 -->
-          <div
-            class="glide-ring pointer-events-none absolute z-[1] h-[28px] w-[28px] -translate-x-1/2 -translate-y-1/2 rounded-full border-[1.5px] border-gold/70"
-            :style="{ left: ringX + 'px', top: '18px' }"
-            aria-hidden="true"
-          ></div>
-        </div>
-      </div>
-
-      <!-- 逐条大展签 -->
-      <div class="mt-10">
-        <Transition name="card" mode="out-in">
-          <article
-            :key="current"
-            class="relative mx-auto max-w-[880px] rounded-md border bg-cream px-8 py-7 sm:px-10 sm:py-8"
-            :class="currentItem.milestone ? 'border-gold/60' : 'border-border'"
-          >
-            <!-- 元信息行：阶段 / 类别 / 里程碑 / 页码 -->
-            <div class="flex items-center justify-between gap-4">
-              <div class="flex items-center gap-4 text-[11px] tracking-[0.2em]">
-                <span class="text-gold">阶段 · {{ phaseName }}</span>
-                <span class="text-ink/30" aria-hidden="true">｜</span>
-                <span class="text-ink/45">类别 · {{ currentItem.type }}</span>
-              </div>
-              <div class="flex items-center gap-3">
-                <span
-                  v-if="currentItem.milestone"
-                  class="rounded-[3px] border border-gold/60 px-1.5 py-0.5 text-[10px] tracking-[0.2em] text-gold/80"
-                >里程碑</span>
-                <span class="text-[11px] font-medium tracking-[0.3em] text-ink/40">{{ pageNo }} / {{ total }}</span>
-              </div>
-            </div>
-
-            <!-- 主视觉：56px 大年份 + 刻划动画文物图标 -->
-            <div class="mt-6 flex items-end justify-between gap-6">
-              <h3 class="text-[56px] font-light leading-none tracking-[0.12em]">{{ currentItem.year }}</h3>
-              <svg
-                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                stroke-linecap="round" stroke-linejoin="round" class="draw h-12 w-12 shrink-0 text-gold"
-                v-html="ICONS[currentItem.icon]" aria-hidden="true"
-              ></svg>
-            </div>
-            <span class="rule-grow mt-5 block h-px w-12 bg-gold" aria-hidden="true"></span>
-
-            <!-- 标题 + 正文 -->
-            <h4 class="mt-5 text-[20px] font-bold tracking-[0.06em]">{{ currentItem.title }}</h4>
-            <p class="mt-3 text-[15.5px] font-light leading-[2] text-ink-soft">{{ currentItem.desc }}</p>
-
-            <!-- 信息条：阶段概况 + 前后事件导航 -->
-            <div class="mt-6 flex items-center justify-between gap-6 border-t border-border pt-4">
-              <span class="whitespace-nowrap text-[11px] tracking-[0.2em] text-ink/40">
-                本阶段 {{ phaseRange }} · 共 {{ phaseCount }} 件
+            <span class="arc-dot"></span>
+            <span class="arc-year">{{ item.year }}</span>
+            <span class="win-card" :style="{ '--hc': headColor(i) }">
+              <span class="win-head">
+                <span class="win-num">{{ String(i + 1).padStart(2, '0') }}</span>
+                <span class="win-title">{{ item.title }}</span>
               </span>
-              <div class="flex items-center gap-5">
-                <button
-                  v-if="current > 0"
-                  type="button"
-                  class="truncate text-[12px] tracking-[0.08em] text-ink/45 transition-colors duration-200 hover:text-ochre"
-                  @click="current -= 1"
-                >‹ {{ items[current - 1].year }} · {{ items[current - 1].title }}</button>
-                <span v-else></span>
-                <button
-                  v-if="current < items.length - 1"
-                  type="button"
-                  class="truncate text-[12px] tracking-[0.08em] text-ink/45 transition-colors duration-200 hover:text-ochre"
-                  @click="current += 1"
-                >{{ items[current + 1].year }} · {{ items[current + 1].title }} ›</button>
-                <span v-else></span>
-              </div>
-            </div>
-          </article>
-        </Transition>
+              <span class="win-body">
+                <span class="win-desc">{{ item.desc }}</span>
+              </span>
+            </span>
+          </button>
+        </div>
+
+        <!-- 左右切换箭头：左 3 个加宽角度小于号 / 右 3 个大于号（SVG 描边加粗） -->
+        <button type="button" class="axis-arrow left" aria-label="上一个年份" @click="step(-1)">
+          <svg viewBox="0 0 72 24" fill="none" stroke="currentColor" stroke-width="3.2"
+            stroke-linecap="round" stroke-linejoin="round" class="axis-chevron" aria-hidden="true">
+            <polyline points="19,2 6,12 19,22" />
+            <polyline points="43,2 30,12 43,22" />
+            <polyline points="67,2 54,12 67,22" />
+          </svg>
+        </button>
+        <button type="button" class="axis-arrow right" aria-label="下一个年份" @click="step(1)">
+          <svg viewBox="0 0 72 24" fill="none" stroke="currentColor" stroke-width="3.2"
+            stroke-linecap="round" stroke-linejoin="round" class="axis-chevron" aria-hidden="true">
+            <polyline points="5,2 18,12 5,22" />
+            <polyline points="29,2 42,12 29,22" />
+            <polyline points="53,2 66,12 53,22" />
+          </svg>
+        </button>
+      </div>
       </div>
     </div>
   </section>
@@ -161,32 +91,24 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import timelineImage from '../../../pic/2.jpg'
 
-// ── 文案数据：type 为事件类别，milestone 为里程碑年份 ──
+// ── 文案数据 ──
 const items = [
-  { year: '1985年', icon: 'spade', type: '考古调查', title: '文物普查发现', desc: '蚌埠市博物馆在第二次全国文物普查中发现', milestone: false },
-  { year: '1986年', icon: 'face', type: '考古发掘', title: '抢救性发掘', desc: '抢救性发掘，出土陶塑雕题纹面人头像等重要文物', milestone: true },
-  { year: '1991—1992年', icon: 'urn', type: '考古发掘', title: '两次考古发掘', desc: '两次考古发掘，出土大量陶器石器骨器，650余件刻划符号', milestone: true },
-  { year: '1998年', icon: 'stele', type: '文物保护', title: '市级文保单位', desc: '列为蚌埠市级文物保护单位', milestone: false },
-  { year: '2004年', icon: 'stele', type: '文物保护', title: '省级文保单位', desc: '列为安徽省级文物保护单位', milestone: false },
-  { year: '2005年', icon: 'seal', type: '学术研究', title: '正式命名', desc: '学术研讨会，正式命名"双墩文化"', milestone: true },
-  { year: '2007年', icon: 'book', type: '学术研究', title: '发掘简报发表', desc: '发表《安徽蚌埠双墩新石器时代遗址发掘简报》', milestone: false },
-  { year: '2008年', icon: 'book', type: '学术研究', title: '发掘报告出版', desc: '出版《蚌埠双墩新石器时代遗址发掘报告》', milestone: false },
-  { year: '2009年', icon: 'mark', type: '学术研究', title: '汉字源头之证', desc: '国际学术研讨会，认定双墩刻划符号为汉字源头之一', milestone: true },
-  { year: '2013年', icon: 'star', type: '文物保护', title: '全国重点文保', desc: '列为第七批全国重点文物保护单位', milestone: true },
-  { year: '2014至今', icon: 'spade', type: '考古发掘', title: '持续考古发掘', desc: '中国社科院考古研究所主持考古发掘', milestone: false },
-  { year: '2017年', icon: 'talk', type: '规划发展', title: '遗址公园立项', desc: '淮河古代文明研讨会，入选国家考古遗址公园立项名单', milestone: false },
-  { year: '2019年', icon: 'talk', type: '学术研究', title: '淮河文明研讨', desc: '淮河古代文明学术研讨会在蚌埠召开', milestone: false },
-  { year: '2021年', icon: 'star', type: '规划发展', title: '大遗址专项规划', desc: '列入国家大遗址保护利用"十四五"专项规划', milestone: true },
-]
-
-// ── 历史阶段（卡片标签 + 信息条）──
-const PHASES = [
-  { name: '发现与发掘', range: '1985 — 1992', from: 0, to: 2 },
-  { name: '保护与命名', range: '1998 — 2005', from: 3, to: 5 },
-  { name: '学术成果', range: '2007 — 2009', from: 6, to: 8 },
-  { name: '国家保护', range: '2013 — 2014', from: 9, to: 10 },
-  { name: '当代发展', range: '2017 — 2021', from: 11, to: 13 },
+  { year: '1985年', type: '考古调查', title: '文物普查发现', desc: '在第二次全国文物普查中被发现，遗址位于蚌埠市淮上区双墩村北的台地上，南北长约 180 米，总面积约 2.5 万平方米，是淮河中游年代最早的新石器时代遗存。', milestone: false },
+  { year: '1986年', type: '考古发掘', title: '抢救性发掘', desc: '蚌埠市博物馆组织抢救性发掘，出土陶塑雕题纹面人头像等重要文物，其微笑神态被誉为“世界上最古老的微笑”。', milestone: true },
+  { year: '1991—1992年', type: '考古发掘', title: '两次考古发掘', desc: '安徽省文物考古研究所与蚌埠市博物馆联合组织两次发掘，共布探方 15 个、面积约 375 平方米，出土陶器、石器、骨角器、蚌器及 600 余件刻划符号。', milestone: true },
+  { year: '1998年', type: '文物保护', title: '市级文保单位', desc: '被蚌埠市人民政府公布为市级文物保护单位，遗址保护自此纳入地方文物管理体系。', milestone: false },
+  { year: '2004年', type: '文物保护', title: '省级文保单位', desc: '被安徽省人民政府公布为省级文物保护单位，遗址本体与周边环境的保护进一步强化。', milestone: false },
+  { year: '2005年', type: '学术研究', title: '正式命名', desc: '中国先秦史学会等单位主办“蚌埠双墩遗址暨双墩文化学术研讨会”，正式提出以“双墩”命名的考古学文化。', milestone: true },
+  { year: '2007年', type: '学术研究', title: '发掘简报发表', desc: '安徽省文物考古研究所与蚌埠市博物馆联合发表《安徽蚌埠双墩新石器时代遗址发掘简报》，系统公布历次发掘资料。', milestone: false },
+  { year: '2008年', type: '学术研究', title: '发掘报告出版', desc: '联合编著的《蚌埠双墩新石器时代遗址发掘报告》正式出版，为双墩文化的深入研究奠定了资料基础。', milestone: false },
+  { year: '2009年', type: '学术研究', title: '汉字源头之证', desc: '中国文字学会等单位共同主办国际学术研讨会，与会专家一致认定双墩刻划符号是汉字的源头之一。', milestone: true },
+  { year: '2013年', type: '文物保护', title: '全国重点文保', desc: '被国务院公布为第七批全国重点文物保护单位，编号 7-0186-1-186，保护级别上升至国家级。', milestone: true },
+  { year: '2014至今', type: '考古发掘', title: '持续考古发掘', desc: '中国社会科学院考古研究所主持考古发掘，二次发掘全面展开，逐步揭示遗址的聚落布局与文化面貌。', milestone: false },
+  { year: '2017年', type: '规划发展', title: '遗址公园立项', desc: '入选国家考古遗址公园立项名单，规划面积约 98.6 公顷，集科研、教育、旅游功能于一体。', milestone: false },
+  { year: '2019年', type: '学术研究', title: '淮河文明研讨', desc: '淮河古代文明学术研讨会在蚌埠召开，进一步论证双墩文化在淮河流域早期文明进程中的重要地位。', milestone: false },
+  { year: '2021年', type: '规划发展', title: '大遗址专项规划', desc: '列入国家大遗址保护利用“十四五”专项规划，遗址的保护利用进入国家层面统筹推进阶段。', milestone: true },
 ]
 
 // ── 双墩风格刻符（眉题印）──
@@ -194,174 +116,343 @@ const GLYPHS = {
   sun: `<circle cx="12" cy="12" r="4.5"/><path d="M12 3.2v2.1M12 18.7v2.1M3.2 12h2.1M18.7 12h2.1M5.8 5.8l1.5 1.5M16.7 16.7l1.5 1.5M18.2 5.8l-1.5 1.5M7.3 16.7l-1.5 1.5"/>`,
 }
 
-// ── 极简文物线稿（path 片段，1.5px 描边，无填充）──
-const ICONS = {
-  spade: `<path d="M12 3.5v5.5"/><path d="M12 9c-3.1 0-5 2.2-5 5.2 0 .4.3.8.8.8h8.4c.5 0 .8-.4.8-.8C17 11.2 15.1 9 12 9z"/>`,
-  face: `<circle cx="12" cy="11.5" r="5.8"/><path d="M9.6 10.7h.01M14.4 10.7h.01"/><path d="M10.4 13.6c1 .7 2.2.7 3.2 0"/><path d="M9.4 7.3c1.6-1.1 3.6-1.1 5.2 0"/>`,
-  urn: `<path d="M9.8 3.5h4.4"/><path d="M10.3 3.6c-.2 2.5 1.5 3.2 1.7 4.9s-1.7 2.4-1.7 5.2"/><path d="M13.7 3.6c.2 2.5-1.5 3.2-1.7 4.9s1.7 2.4 1.7 5.2"/><path d="M9.7 16.4c0 1.3 1 2.1 2.3 2.1s2.3-.8 2.3-2.1"/>`,
-  seal: `<rect x="7.2" y="8.5" width="9.6" height="11" rx="1"/><rect x="10.2" y="4.8" width="3.6" height="3.4" rx="0.6"/><path d="M10 12h4M10 15h3.4"/>`,
-  stele: `<rect x="9" y="3.5" width="6" height="13" rx="1"/><path d="M9.8 7.5h4.4M9.8 10.3h4.4M9.8 13.2h3.2"/><path d="M10.2 18.6v2.4M13.8 18.6v2.4M8.2 21h7.6"/>`,
-  book: `<path d="M12 6.2C10.6 5.1 8.8 4.6 6.5 4.6v12c2.3 0 4.1.5 5.5 1.6 1.4-1.1 3.2-1.6 5.5-1.6v-12c-2.3 0-4.1.5-5.5 1.6z"/><path d="M12 6.2v12"/>`,
-  mark: `<path d="M7.8 5l3 3.6M14 5l-3 3.6"/><path d="M7.5 12h7.5M7.5 15h5"/><path d="M15 12v3.6"/>`,
-  talk: `<circle cx="8.2" cy="10.2" r="4.3"/><path d="M5 13.4 3.6 16.2l3.1-.9"/><circle cx="16.8" cy="12.6" r="3.4"/><path d="M14.3 15.1l-.9 2.3 2.5-.9"/>`,
-  star: `<path d="M12 4.2l2.1 4.3 4.7.7-3.4 3.3.8 4.7-4.2-2.2-4.2 2.2.8-4.7L5.2 9.2l4.7-.7z"/>`,
-}
-
-// ── 时间比例定位：节点间距 = 年份差 / 总跨度 × 剩余空间 + 最小间距 ──
-const YEARS = [1985, 1986, 1991, 1998, 2004, 2005, 2007, 2008, 2009, 2013, 2014, 2017, 2019, 2021]
-
+/* ── 水平时间轴几何 ──
+   节点等距分布在一条水平线上；一屏恰好 2 个节点+卡片完整可见（左=当前、右=下一个），
+   其余彻底隐藏；卡片统一排在时间主线上方 */
 const current = ref(0)
-const pos = ref([])
-const axisWrap = ref(null)
-const scrollWrap = ref(null)
-const scrollLeft = ref(0)
+const arcStage = ref(null)
+const stageW = ref(1200)
+const spacing = ref(400)
+const trackW = ref(4000)
+const stageH = ref(420)
+const nodeY = ref(150)
+
+const rootRatio = () => parseFloat(getComputedStyle(document.documentElement).fontSize) / 16 || 1
 
 const currentItem = computed(() => items[current.value])
-const currentPhase = computed(() => PHASES.find((p) => current.value >= p.from && current.value <= p.to))
-const phaseName = computed(() => currentPhase.value?.name ?? '')
-const phaseRange = computed(() => currentPhase.value?.range ?? '')
-const phaseCount = computed(() => (currentPhase.value?.to ?? 0) - (currentPhase.value?.from ?? 0) + 1)
-const pageNo = computed(() => String(current.value + 1).padStart(2, '0'))
-const total = computed(() => String(items.length).padStart(2, '0'))
-const ringX = computed(() => pos.value[current.value] ?? 0)
-const progressStyle = computed(() => ({
-  left: `${pos.value[0] ?? 0}px`,
-  width: `${Math.max(0, (pos.value[current.value] ?? 0) - (pos.value[0] ?? 0))}px`,
-}))
 
-function labelWidth(s) {
-  const digits = (s.match(/\d/g) || []).length
-  return digits * 6.6 + (s.length - digits) * 11 + 6
+/* 整条轨道横向位移：当前节点落在视口 1/4 处（双卡布局：左=当前、右=下一个） */
+const trackX = computed(() => -(current.value * spacing.value) + stageW.value / 4)
+
+/* 节点定位：锚点即圆心，随后用 CSS transform 居中 */
+function nodeStyle(i) {
+  return { left: `${i * spacing.value}px`, top: `${nodeY.value}px` }
 }
 
-function computePositions() {
-  const wrap = axisWrap.value
-  if (!wrap) return
-  const W = Math.max(wrap.clientWidth, 1200)
-  const inset = 40
-  const usable = W - inset * 2
-
-  const mins = []
-  for (let i = 1; i < items.length; i++) {
-    mins.push(Math.max(74, (labelWidth(items[i - 1].year) + labelWidth(items[i].year)) / 2 + 26))
-  }
-  const sumMin = mins.reduce((a, b) => a + b, 0)
-  const scale = Math.min(1, usable / sumMin)
-  const gaps = mins.map((m) => m * scale)
-
-  const slack = usable - sumMin * scale
-  if (slack > 0) {
-    const totalYears = YEARS[YEARS.length - 1] - YEARS[0]
-    gaps.forEach((g, i) => {
-      gaps[i] = g + ((YEARS[i + 1] - YEARS[i]) / totalYears) * slack
-    })
-  }
-
-  const p = [inset]
-  for (let i = 1; i < items.length; i++) p.push(p[i - 1] + gaps[i - 1])
-  pos.value = p
+/* 窗口标题栏配色：赭石系循环（文博克制，不高饱和） */
+const HEAD_COLORS = ['#8B5E3C', '#94673E', '#B9925F']
+function headColor(i) {
+  return HEAD_COLORS[i % HEAD_COLORS.length]
 }
+
+/* 只展示当前 + 下一个共 2 个节点：其余彻底隐藏（不出现半截卡片） */
+function cardClass(i) {
+  return i === current.value || i === current.value + 1 ? 'is-on' : 'is-away'
+}
+
+function compute() {
+  const el = arcStage.value
+  if (!el) return
+  const w = el.clientWidth || 1200
+  const r = rootRatio()
+  stageW.value = w
+  /* 间距 = 视口宽 × 0.5：一屏恰好 2 套"节点+卡片"完整可见，
+     相邻卡（±1）落在 1/4 与 3/4 处，更远的完全在视口外（无半截） */
+  spacing.value = Math.round(w * 0.5)
+  trackW.value = (items.length - 1) * spacing.value + w
+  /* 中线位置与舞台高度：整体上移，给节点下方的年份留足空间（不被底部裁切） */
+  nodeY.value = Math.round(360 * r)
+  stageH.value = Math.round(440 * r)
+}
+
+let ro = null
 
 function step(dir) {
   const n = current.value + dir
   if (n >= 0 && n < items.length) current.value = n
 }
 
-function onScroll() {
-  scrollLeft.value = scrollWrap.value?.scrollLeft ?? 0
-}
-
-let ro = null
-
-function onResize() {
-  computePositions()
-}
-
 onMounted(() => {
-  computePositions()
+  compute()
   if (window.ResizeObserver) {
-    ro = new ResizeObserver(onResize)
-    ro.observe(axisWrap.value)
+    ro = new ResizeObserver(compute)
+    if (arcStage.value) ro.observe(arcStage.value)
   } else {
-    window.addEventListener('resize', onResize)
+    window.addEventListener('resize', compute)
   }
 })
-
 onBeforeUnmount(() => {
   if (ro) ro.disconnect()
-  else window.removeEventListener('resize', onResize)
+  else window.removeEventListener('resize', compute)
 })
 </script>
 
 <style scoped>
-/* 金色选择环：沿轴缓滑 */
-.glide-ring {
-  transition: left 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+/* 模块底色：红褐岩画调，边缘深、向中心柔过渡 */
+.chronology-module {
+  background: radial-gradient(
+    ellipse 90% 100% at 50% 40%,
+    #ede0c9 0%,
+    #dcc6a2 58%,
+    #c3a17c 100%
+  );
 }
 
-/* 走过的路：金线随节点推进延伸 */
-.progress-line {
-  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+/* 刻符氛围元素：贴右边缘；左侧加宽横向渐变蒙版，从右向左大幅淡化，
+   去掉外发光描边（drop-shadow 会让图片像贴纸一样有轮廓），真正融入底色 */
+.chronology-bg-image {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 42%;
+  object-fit: cover;
+  object-position: center;
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+  pointer-events: none;
+  user-select: none;
+  filter: sepia(0.55) saturate(1.3) hue-rotate(-8deg) brightness(1.02);
+  -webkit-mask-image:
+    linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(0, 0, 0, 0.4) 32%,
+      #000 60%
+    ),
+    radial-gradient(
+      ellipse 130% 100% at 100% 50%,
+      rgba(0, 0, 0, 0.9) 0%,
+      rgba(0, 0, 0, 0.45) 55%,
+      transparent 80%
+    );
+  mask-image:
+    linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(0, 0, 0, 0.4) 32%,
+      #000 60%
+    ),
+    radial-gradient(
+      ellipse 130% 100% at 100% 50%,
+      rgba(0, 0, 0, 0.9) 0%,
+      rgba(0, 0, 0, 0.45) 55%,
+      transparent 80%
+    );
 }
 
-/* 展签卡片：交叉淡入 + 轻微上浮 */
-.card-enter-active,
-.card-leave-active {
-  transition: opacity 0.35s ease, transform 0.35s ease;
+/* ── 水平时间轴 ── */
+.arc-stage {
+  overflow: hidden; /* 视口外的节点裁切隐藏 */
 }
-.card-enter-from {
+
+.arc-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  will-change: transform;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 时间主线：淡赭石细实线（3px） */
+.timeline-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(139, 94, 60, 0.45);
+}
+
+/* 年份节点：锚点即主线上的圆心；内容块交替排布在线的上/下方 */
+.arc-node {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* 非激活节点：适度降低透明度，激活节点权重最高 */
+.arc-node:not(.is-active) {
+  opacity: 0.6;
+}
+.arc-node:not(.is-active):hover {
+  opacity: 1;
+}
+
+/* 视口外的节点：彻底隐藏，杜绝半截卡片 */
+.arc-node.is-away {
   opacity: 0;
-  transform: translateY(12px);
-}
-.card-leave-to {
-  opacity: 0;
-  transform: translateY(-6px);
+  visibility: hidden;
+  pointer-events: none;
 }
 
-/* 刻划动效：文物图标逐笔刻出 */
-.draw path {
-  stroke-dasharray: 160;
-  stroke-dashoffset: 160;
-  animation: incise 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-.draw path:nth-child(2) {
-  animation-delay: 0.12s;
-}
-.draw path:nth-child(3) {
-  animation-delay: 0.24s;
-}
-.draw path:nth-child(4) {
-  animation-delay: 0.36s;
-}
-@keyframes incise {
-  to {
-    stroke-dashoffset: 0;
-  }
+/* 年份：置于圆形节点正下方（时间主线下），字号为原 1.5 倍 */
+.arc-year {
+  position: absolute;
+  left: 0;
+  top: 1.4rem;
+  transform: translateX(-50%);
+  font-size: 2.25rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #8b5e3c;
+  white-space: nowrap;
 }
 
-/* 金色分隔线：渐次展开 */
-.rule-grow {
-  animation: grow 0.6s ease 0.15s both;
+/* 圆点：锚定在时间主线上（放大） */
+.arc-dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 9999px;
+  border: 2px solid rgba(139, 94, 60, 0.55);
+  background: rgba(255, 253, 248, 0.95);
+  transform: translate(-50%, -50%);
+  transition:
+    width 0.3s ease,
+    height 0.3s ease,
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
-@keyframes grow {
-  from {
-    width: 0;
-  }
+.arc-node.is-active .arc-dot {
+  width: 1.9rem;
+  height: 1.9rem;
+  border-color: #8b5e3c;
+  background: #8b5e3c;
+  box-shadow: 0 0 0 8px rgba(139, 94, 60, 0.16), 0 2px 8px rgba(60, 40, 20, 0.15);
+}
+
+/* 窗口式卡片：盒子放大到原 1.5 倍（高 30rem，宽拉满一屏两栏） */
+.win-card {
+  position: absolute;
+  left: 0;
+  width: min(45rem, 46vw);
+  height: 20rem;
+  overflow: hidden;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(60, 40, 20, 0.12);
+}
+.arc-node.is-above .win-card {
+  bottom: 1.2rem;
+}
+.arc-node.is-below .win-card {
+  top: 1.2rem;
+}
+
+/* 标题栏（窗口头）：赭石系底色 + 编号盒，箭头指向中线 */
+.win-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1.1rem 1.4rem;
+  background: var(--hc, #8b5e3c);
+  color: #fffefa;
+}
+.win-num {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.18);
+}
+.win-title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.win-head::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  margin-left: -10px;
+  border: 10px solid transparent;
+}
+.arc-node.is-above .win-head::after {
+  bottom: -20px;
+  border-top-color: var(--hc, #8b5e3c);
+  border-bottom: none;
+}
+.arc-node.is-below .win-head::after {
+  top: -20px;
+  border-bottom-color: var(--hc, #8b5e3c);
+  border-top: none;
+}
+
+/* 正文（窗口体）：米白底，描述文字 */
+.win-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1.4rem 1.6rem;
+  background: #fffefa;
+  border: 1px solid rgba(191, 191, 191, 0.4);
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+}
+.win-desc {
+  font-size: 1.6rem;
+  line-height: 1.65;
+  color: #56524d;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 左右切换箭头：3 个加宽角度 SVG 折线箭头，加粗，尺寸约为原符号 4 倍；
+   常态更深更清晰，hover 变赭石 + 放大 */
+.axis-arrow {
+  position: absolute;
+  top: 82%; /* 对齐时间主线（nodeY/stageH ≈ 0.82） */
+  transform: translateY(-50%);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 9rem;
+  height: 3.6rem;
+  background: transparent;
+  border: none;
+  color: rgba(120, 78, 50, 0.85);
+  cursor: pointer;
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+.axis-chevron {
+  width: 9rem;
+  height: 3rem;
+}
+.axis-arrow:hover {
+  color: #8b5e3c;
+  transform: translateY(-50%) scale(1.08);
+}
+.axis-arrow.left {
+  left: 0.5rem;
+}
+.axis-arrow.right {
+  right: 0.5rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .glide-ring,
-  .progress-line,
-  .card-enter-active,
-  .card-leave-active {
+  .arc-track {
     transition-duration: 0.01ms;
   }
-  .draw path,
-  .rule-grow {
-    animation: none;
-  }
-  .draw path {
-    stroke-dashoffset: 0;
+  .arc-dot {
+    transition-duration: 0.01ms;
   }
 }
 </style>

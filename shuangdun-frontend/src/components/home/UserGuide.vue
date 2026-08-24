@@ -1,45 +1,38 @@
 <template>
-  <section class="page-section">
-    <h2 class="section-title">使用指南</h2>
-    <p class="section-subtitle">三步开始探索之旅</p>
+  <!-- 快速上手：第三板块，居中布局，等宽三卡，紧凑克制 -->
+  <section class="bg-[#F0EBE1]">
+    <div class="mx-auto max-w-5xl px-6 py-10 md:py-14">
+      <h2 class="text-center font-sans font-bold text-2xl md:text-3xl text-[#3A2E24]">
+        快速上手
+      </h2>
+      <p class="mt-2 text-center font-sans text-base md:text-lg text-[#6B5D4F]">
+        三步探索双墩刻符
+      </p>
 
-    <div class="grid md:grid-cols-3 gap-8 mt-8">
-      <div class="text-center">
-        <div
-          class="w-16 h-16 mx-auto mb-4 rounded-full bg-terracotta text-cream flex items-center justify-center text-2xl font-bold font-ui"
+      <!-- 三个紧凑入口卡片：等宽，无编号圆、无连接线 -->
+      <div class="grid md:grid-cols-3 gap-4 md:gap-5 mt-8">
+        <router-link
+          v-for="card in cards"
+          :key="card.title"
+          :to="card.path"
+          class="group block rounded-lg bg-[#F7F2E9] border border-[#D9C7A3]/60 px-5 py-5 text-center transition-colors duration-200 hover:border-[#B08D5A]"
         >
-          1
-        </div>
-        <h3 class="font-serif font-bold text-lg text-ink mb-2">浏览资源库</h3>
-        <p class="text-ink-light text-sm">
-          进入刻符资源库，按分类或形态筛选感兴趣的刻符，点击查看高清大图和详细解读。
-        </p>
-      </div>
-      <div class="text-center">
-        <div
-          class="w-16 h-16 mx-auto mb-4 rounded-full bg-terracotta text-cream flex items-center justify-center text-2xl font-bold font-ui"
-        >
-          2
-        </div>
-        <h3 class="font-serif font-bold text-lg text-ink mb-2">
-          体验 AI 识别
-        </h3>
-        <p class="text-ink-light text-sm">
-          在 AI
-          识别页面输入一个汉字，观察AI如何从双墩刻符中匹配最相似的结果。
-        </p>
-      </div>
-      <div class="text-center">
-        <div
-          class="w-16 h-16 mx-auto mb-4 rounded-full bg-terracotta text-cream flex items-center justify-center text-2xl font-bold font-ui"
-        >
-          3
-        </div>
-        <h3 class="font-serif font-bold text-lg text-ink mb-2">分享与反馈</h3>
-        <p class="text-ink-light text-sm">
-          将对你有启发的刻符分享给朋友，或提交反馈帮助我们改进 AI 模型。
-        </p>
+          <h3 class="font-sans text-lg md:text-xl font-bold text-[#3A2E24]">
+            {{ card.title }}
+          </h3>
+          <p class="mt-2 mx-auto max-w-[26ch] font-sans text-sm md:text-base text-[#6B5D4F] leading-relaxed">
+            {{ card.desc }}
+          </p>
+        </router-link>
       </div>
     </div>
   </section>
 </template>
+
+<script setup>
+const cards = [
+  { title: 'AI刻符匹配', desc: '输入汉字或上传图像，AI检索相似双墩刻符', path: '/ai' },
+  { title: '浏览资源库', desc: '按分类筛选刻符，查看高清大图', path: '/library' },
+  { title: '分享与反馈', desc: '分享你的发现，让平台和你一起成长', path: '/about' },
+]
+</script>

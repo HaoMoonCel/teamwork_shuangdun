@@ -39,7 +39,7 @@
                   <span class="text-xs font-ui text-ink-light uppercase tracking-wider">释读名称</span>
                   <div class="flex items-center gap-3">
                     <p class="text-2xl font-serif font-bold text-ink">{{ symbol.name }}</p>
-                    <span class="text-xs font-ui text-ink-light/70 border border-border rounded px-2 py-0.5">{{ symbol.id }}</span>
+                    <span class="text-xs font-ui text-ink/80 border border-border rounded px-2 py-0.5">{{ symbol.id }}</span>
                   </div>
                 </div>
                 <div>
@@ -79,28 +79,35 @@
                 <img
                   :src="datasetImages[0]"
                   :alt="symbol.name"
-                  class="max-w-full max-h-[400px] object-contain cursor-zoom-in hover:scale-150 transition-transform duration-300 origin-center"
+                  class="max-w-full max-h-[400px] object-contain"
                 />
               </div>
             </div>
 
-            <!-- Dataset grid — single pre-rendered image -->
+            <!-- 手绘数据汇总：全部原始样本逐张清晰展示（不再用低分辨率拼图） -->
             <div class="mt-8 pt-6 border-t border-border">
               <h3 class="font-serif font-bold text-lg text-ink mb-4">
-                手绘数据集 — {{ datasetCount }} 张原始样本
+                手绘数据汇总 — {{ datasetCount }} 张原始样本
               </h3>
-              <p class="text-xs text-ink-light mb-4 font-ui">
-                📜 以下为双墩刻符「{{ symbol.name }}」的全部手绘样本，每张来自独立的手绘采集
+              <p class="text-xs text-ink/80 mb-4 font-ui">
+                以下为双墩刻符“{{ symbol.name }}”的全部手绘样本，每张来自独立的手绘采集，图片以原始分辨率清晰展示
               </p>
-              <a :href="gridUrl" target="_blank">
-                <img
-                  :src="gridUrl"
-                  :alt="`${symbol.name} 全部手绘样本`"
-                  class="w-full border border-border rounded cursor-pointer hover:shadow-lg transition-shadow"
-                />
-              </a>
-              <p class="text-xs text-ink-light/60 mt-2 text-center font-ui">
-                点击查看大图
+              <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2">
+                <div
+                  v-for="img in datasetImages"
+                  :key="img"
+                  class="aspect-square bg-white border border-border rounded flex items-center justify-center p-1"
+                >
+                  <img
+                    :src="img"
+                    :alt="`${symbol.name} 手绘样本`"
+                    class="h-full w-full object-contain"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+              <p class="text-xs text-ink/80 mt-3 text-center font-ui">
+                共 {{ datasetCount }} 张手绘样本
               </p>
             </div>
           </div>
@@ -123,8 +130,6 @@ defineEmits(['close'])
 const datasetImages = computed(() => getDatasetImages(props.symbol))
 
 const datasetCount = computed(() => datasetImages.value.length)
-
-const gridUrl = computed(() => `/dataset_grids/${props.symbol?.name}_grid.png`)
 </script>
 
 <style scoped>

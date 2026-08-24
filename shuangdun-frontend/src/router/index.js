@@ -17,6 +17,16 @@ const routes = [
     component: () => import('@/pages/AIRecognition.vue'),
   },
   {
+    path: '/guide',
+    name: 'guide',
+    component: () => import('@/pages/UsageGuide.vue'),
+  },
+  {
+    path: '/feedback',
+    name: 'feedback',
+    component: () => import('@/pages/FeedbackPage.vue'),
+  },
+  {
     path: '/about',
     name: 'about',
     component: () => import('@/pages/AboutPage.vue'),

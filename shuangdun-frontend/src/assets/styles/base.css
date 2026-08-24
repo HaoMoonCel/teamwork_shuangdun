@@ -3,8 +3,21 @@
 @tailwind utilities;
 
 @layer base {
+  /* 全局字号整体上调：Tailwind 尺寸基于 rem，改这一行即可全站等比放大 */
+  html {
+    font-size: 17px;
+    /* 始终预留纵向滚动条空间：避免页面切换时滚动条出现/消失导致
+       顶部菜单栏（固定定位、居中）发生轻微左右位移 */
+    scrollbar-gutter: stable;
+  }
+
+  /* 全站统一：page-home 不再放大字号（与其余页面一致），首页与其他页面同尺寸 */
+  html.page-home {
+    font-size: 17px;
+  }
+
   body {
-    @apply bg-paper text-ink font-serif;
+    @apply bg-paper text-ink font-sans;
   }
 
   h1,
@@ -20,7 +33,7 @@
 
 @layer components {
   .btn-primary {
-    @apply px-6 py-3 bg-terracotta text-cream font-ui rounded
+    @apply px-7 py-3.5 text-base bg-terracotta text-cream font-ui rounded
            hover:bg-terracotta/90 active:scale-95
            transition-all duration-200 cursor-pointer;
   }

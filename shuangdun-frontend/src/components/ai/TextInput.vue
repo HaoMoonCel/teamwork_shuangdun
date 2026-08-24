@@ -14,7 +14,7 @@
 
     <!-- 37 字快捷选择（契约第七节注意事项 6：按 /api/chars 字库过滤输入面板） -->
     <div class="mt-4">
-      <p class="text-xs text-ink-light/70 font-ui mb-2">
+      <p class="text-xs text-ink/80 font-ui mb-2">
         字库支持（{{ supportedChars.length }} 字）· 点击快速选择：
       </p>
       <div class="flex flex-wrap gap-1.5">
@@ -22,13 +22,8 @@
           v-for="c in supportedChars"
           :key="c"
           type="button"
-          class="w-9 h-9 rounded border font-serif text-base transition-colors
-                 disabled:opacity-50 disabled:cursor-not-allowed"
-          :class="
-            c === text
-              ? 'bg-terracotta text-cream border-terracotta'
-              : 'bg-paper border-border text-ink hover:border-terracotta hover:text-terracotta'
-          "
+          class="char-btn h-9 w-9 font-serif text-base disabled:opacity-50 disabled:cursor-not-allowed"
+          :class="c === text ? 'is-selected' : 'is-idle'"
           :disabled="disabled"
           @click="selectChar(c)"
         >
@@ -37,8 +32,8 @@
       </div>
     </div>
 
-    <p class="text-xs text-ink-light/60 mt-3 font-ui">
-      💡 提示：输入支持的汉字后，AI 将生成对应风格的双墩刻符图
+    <p class="text-xs text-ink/80 mt-3 font-ui">
+      提示：输入支持的汉字后，将生成对应风格的双墩刻符图
     </p>
   </div>
 </template>
@@ -67,3 +62,40 @@ function selectChar(c) {
   emit('input-change', { type: 'text', value: c })
 }
 </script>
+
+<style scoped>
+/* 字库按钮：刻符风八边形（clip-path），选中即印章填充 */
+.char-btn {
+  clip-path: polygon(
+    18% 0,
+    82% 0,
+    100% 18%,
+    100% 82%,
+    82% 100%,
+    18% 100%,
+    0 82%,
+    0 18%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    filter 0.2s ease;
+}
+.char-btn.is-idle {
+  background-color: #f5f0e8;
+  color: #3a3632;
+}
+.char-btn.is-idle:hover {
+  background-color: rgba(178, 106, 66, 0.16);
+  color: #b26a42;
+  filter: drop-shadow(0 1px 2px rgba(60, 40, 20, 0.28));
+}
+.char-btn.is-selected {
+  background-color: #b26a42;
+  color: #fffefa;
+  filter: drop-shadow(0 1px 3px rgba(178, 106, 66, 0.45));
+}
+</style>

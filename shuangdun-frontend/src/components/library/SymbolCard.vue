@@ -24,7 +24,7 @@
       >
         {{ symbol.name }}
       </h3>
-      <p class="text-ink-light/70 text-xs mt-1.5 font-ui tracking-wider">
+      <p class="text-ink/80 text-xs mt-1.5 font-ui tracking-wider">
         {{ symbol.category }}
       </p>
     </div>
