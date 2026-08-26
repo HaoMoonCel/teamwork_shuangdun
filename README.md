@@ -3,10 +3,15 @@
 
 ## 开发协作
 
-1. 克隆仓库：
+> 仓库里的刻符图片（`public/dataset/`、`public/dataset_grids/`）使用 Git LFS 存储，克隆前需先安装 git-lfs，否则图片会加载不了。
+
+1. 安装 Git LFS 并克隆仓库：
 
    ```bash
+   git lfs install          # 首次需先从 https://git-lfs.com 下载安装 Git LFS
    git clone https://github.com/HaoMoonCel/teamwork_shuangdun.git
+   cd teamwork_shuangdun
+   git lfs pull             # 拉取刻符图片真图
    ```
 
 2. 安装依赖并启动开发服务器：
