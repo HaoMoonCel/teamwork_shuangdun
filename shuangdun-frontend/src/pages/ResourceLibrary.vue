@@ -42,17 +42,15 @@
     <div class="mt-12 pt-8 border-t border-border text-center">
       <button class="btn-secondary inline-flex items-center gap-2" @click="downloadZip">
         <svg
-          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
-          stroke-linecap="round" stroke-linejoin="round"
-          class="h-4 w-4 shrink-0" aria-hidden="true"
+          viewBox="0 0 24 24" fill="none" aria-hidden="true"
+          class="h-4 w-4 shrink-0"
         >
-          <!-- 印章式双圈 -->
-          <circle cx="12" cy="12" r="10" opacity="0.55" />
-          <circle cx="12" cy="12" r="8.2" opacity="0.85" />
-          <!-- 向下箭头 + 托盘 -->
-          <path d="M12 5.8v6.2" />
-          <path d="M9 9.2l3 3 3-3" />
-          <path d="M8 15.2h8" />
+          <!-- 方形朱红印章底 -->
+          <rect x="2" y="2" width="20" height="20" rx="5" fill="#C23B22" />
+          <!-- 米白下载符号：向下箭头 + 托盘 -->
+          <path d="M12 6.2v6.4" stroke="#FFFEFA" stroke-width="1.9" stroke-linecap="round" />
+          <path d="M9.1 9.6l2.9 2.9 2.9-2.9" stroke="#FFFEFA" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M8 16.2h8" stroke="#FFFEFA" stroke-width="1.9" stroke-linecap="round" />
         </svg>
         批量导出 ZIP
       </button>
