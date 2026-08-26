@@ -10,6 +10,9 @@
       aria-hidden="true"
     />
 
+    <!-- 底部过渡：向下一个板块（时间轴）的暖色底平滑淡出，消除两图间的硬切 -->
+    <div class="hero-transition" aria-hidden="true"></div>
+
     <!-- 上半部分：文案 + 三个入口模块作为一个整体，纵向居中并略微上提 -->
     <div
       class="relative z-10 w-full px-6 md:px-12 pt-20 pb-6 md:pb-8 flex-1 flex flex-col items-end justify-center"
@@ -155,5 +158,21 @@ const offsetClasses = ['', 'entry-card--mid', '']
     rgba(0, 0, 0, 0.35) 68%,
     transparent 90%
   );
+}
+
+/* 底部过渡：与时间轴板块的边界色 #c3a17c 平滑衔接（渐变加长、终态饱和，消除硬切） */
+.hero-transition {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 14rem;
+  background: linear-gradient(
+    to bottom,
+    rgba(195, 161, 124, 0) 0%,
+    #c3a17c 100%
+  );
+  pointer-events: none;
+  user-select: none;
 }
 </style>

@@ -10,6 +10,12 @@
       aria-hidden="true"
     />
 
+    <!-- 顶部过渡：承接上一板块（Hero）的暖色底，平滑淡入时间轴 -->
+    <div class="timeline-transition" aria-hidden="true"></div>
+
+    <!-- 底部过渡：向刻符简介板块的纸色底平滑淡出 -->
+    <div class="timeline-transition-bottom" aria-hidden="true"></div>
+
     <div class="relative mx-auto w-full max-w-[126rem] px-8 py-10 sm:px-12 md:py-14 flex-1 flex flex-col justify-start">
       <!-- 模块标题（左对齐） -->
       <header>
@@ -25,6 +31,18 @@
         <span class="mt-4 block h-[0.2rem] w-12 bg-gold" aria-hidden="true"></span>
       </header>
 
+      <!-- 进度指示：当前节点 / 总数 -->
+      <div class="timeline-progress mt-6">
+        <div class="progress-track" aria-hidden="true">
+          <div class="progress-fill" :style="{ width: progressPct + '%' }"></div>
+        </div>
+        <span class="progress-label">
+          <span class="progress-cur">{{ String(current + 1).padStart(2, '0') }}</span>
+          <span class="progress-sep">/</span>
+          <span>{{ String(items.length).padStart(2, '0') }}</span>
+        </span>
+      </div>
+
       <!-- 时间轴：垂直居中在标题下方的模块中部 -->
       <div class="flex-1 flex flex-col justify-center mt-4">
       <!-- 水平时间轴：直线主线 + 圆形节点，信息直接附着节点 -->
@@ -38,10 +56,11 @@
           <div class="timeline-line" :style="{ top: nodeY + 'px' }" aria-hidden="true"></div>
 
           <!-- 年份节点：窗口式卡片沿主线上/下交替排布 -->
-          <button
+          <div
             v-for="(item, i) in items"
             :key="item.year"
-            type="button"
+            role="button"
+            tabindex="0"
             class="arc-node"
             :class="[
               cardClass(i),
@@ -50,20 +69,28 @@
             ]"
             :style="nodeStyle(i)"
             :aria-label="`查看 ${item.year} ${item.title}`"
-            @click="current = i"
+            @click="openItem(i)"
+            @keydown.enter.self="openItem(i)"
           >
             <span class="arc-dot"></span>
             <span class="arc-year">{{ item.year }}</span>
-            <span class="win-card" :style="{ '--hc': headColor(i) }">
+            <span
+              class="win-card"
+              :style="{ '--hc': headColor(i) }"
+            >
               <span class="win-head">
                 <span class="win-num">{{ String(i + 1).padStart(2, '0') }}</span>
                 <span class="win-title">{{ item.title }}</span>
               </span>
               <span class="win-body">
+                <span class="win-meta">
+                  <span class="win-type">{{ item.type }}</span>
+                  <span v-if="item.milestone" class="win-milestone">里程碑</span>
+                </span>
                 <span class="win-desc">{{ item.desc }}</span>
               </span>
             </span>
-          </button>
+          </div>
         </div>
 
         <!-- 左右切换箭头：左 3 个加宽角度小于号 / 右 3 个大于号（SVG 描边加粗） -->
@@ -87,6 +114,39 @@
       </div>
     </div>
   </section>
+
+  <!-- 详情弹窗：点卡片标题区弹出（方案 B），内容与原窗口一致 -->
+  <Teleport to="body">
+    <div v-if="detail" class="tl-modal-mask" @click.self="closeDetail">
+      <div
+        class="tl-modal"
+        role="dialog"
+        aria-modal="true"
+        :aria-label="`${detail.year} ${detail.title}`"
+      >
+        <div class="tl-modal-head" :style="{ '--hc': detail.color }">
+          <span class="tl-modal-num">{{ detail.index }}</span>
+          <span class="tl-modal-head-text">
+            <span class="tl-modal-year">{{ detail.year }}</span>
+            <span class="tl-modal-title">{{ detail.title }}</span>
+          </span>
+          <button type="button" class="tl-modal-close" aria-label="关闭详情" @click="closeDetail">
+            <svg
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" aria-hidden="true"
+            ><path d="M18 6 6 18M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <div class="tl-modal-body">
+          <div class="win-meta">
+            <span class="win-type">{{ detail.type }}</span>
+            <span v-if="detail.milestone" class="win-milestone">里程碑</span>
+          </div>
+          <p class="tl-modal-desc">{{ detail.desc }}</p>
+        </div>
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <script setup>
@@ -131,6 +191,9 @@ const rootRatio = () => parseFloat(getComputedStyle(document.documentElement).fo
 
 const currentItem = computed(() => items[current.value])
 
+/* 进度条：当前节点占总节点比例（用于顶部进度指示） */
+const progressPct = computed(() => ((current.value + 1) / items.length) * 100)
+
 /* 整条轨道横向位移：当前节点落在视口 1/4 处（双卡布局：左=当前、右=下一个） */
 const trackX = computed(() => -(current.value * spacing.value) + stageW.value / 4)
 
@@ -172,7 +235,37 @@ function step(dir) {
   if (n >= 0 && n < items.length) current.value = n
 }
 
+/* ── 点击卡片：聚焦该节点并弹出独立详情卡片 ── */
+function openItem(i) {
+  current.value = i
+  openDetail(i)
+}
+
+/* ── 详情弹窗：独立卡片完整展示 ── */
+const detail = ref(null)
+function openDetail(i) {
+  const it = items[i]
+  detail.value = {
+    index: String(i + 1).padStart(2, '0'),
+    year: it.year,
+    title: it.title,
+    type: it.type,
+    milestone: it.milestone,
+    desc: it.desc,
+    color: headColor(i),
+  }
+  document.body.style.overflow = 'hidden'
+}
+function closeDetail() {
+  detail.value = null
+  document.body.style.overflow = ''
+}
+function onKeydown(e) {
+  if (e.key === 'Escape' && detail.value) closeDetail()
+}
+
 onMounted(() => {
+  window.addEventListener('keydown', onKeydown)
   compute()
   if (window.ResizeObserver) {
     ro = new ResizeObserver(compute)
@@ -182,6 +275,8 @@ onMounted(() => {
   }
 })
 onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onKeydown)
+  document.body.style.overflow = ''
   if (ro) ro.disconnect()
   else window.removeEventListener('resize', compute)
 })
@@ -241,6 +336,38 @@ onBeforeUnmount(() => {
     );
 }
 
+/* 顶部过渡：与 Hero 板块底部的边界色 #c3a17c 平滑衔接 */
+.timeline-transition {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 14rem;
+  background: linear-gradient(
+    to bottom,
+    #c3a17c 0%,
+    rgba(195, 161, 124, 0) 100%
+  );
+  pointer-events: none;
+  user-select: none;
+}
+
+/* 底部过渡：向刻符简介板块的纸色 #f5f0e8 平滑淡出 */
+.timeline-transition-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 14rem;
+  background: linear-gradient(
+    to bottom,
+    rgba(245, 240, 232, 0) 0%,
+    #f5f0e8 100%
+  );
+  pointer-events: none;
+  user-select: none;
+}
+
 /* ── 水平时间轴 ── */
 .arc-stage {
   overflow: hidden; /* 视口外的节点裁切隐藏 */
@@ -275,12 +402,11 @@ onBeforeUnmount(() => {
   cursor: pointer;
 }
 
-/* 非激活节点：适度降低透明度，激活节点权重最高 */
-.arc-node:not(.is-active) {
-  opacity: 0.6;
-}
-.arc-node:not(.is-active):hover {
-  opacity: 1;
+/* 主次区分：不做透明虚化；激活节点用金色描边 + 更强阴影凸显，非激活保持完整清晰 */
+.arc-node.is-active .win-card {
+  box-shadow:
+    0 0 0 3px rgba(185, 146, 95, 0.55),
+    0 10px 30px rgba(60, 40, 20, 0.22);
 }
 
 /* 视口外的节点：彻底隐藏，杜绝半截卡片 */
@@ -447,7 +573,178 @@ onBeforeUnmount(() => {
   right: 0.5rem;
 }
 
+/* 进度指示：细金线 + 当前/总数 */
+.timeline-progress {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 22rem;
+}
+.progress-track {
+  flex: 1;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(139, 94, 60, 0.2);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: #b9925f;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.progress-label {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #8b5e3c;
+  white-space: nowrap;
+}
+.progress-sep {
+  margin: 0 0.15rem;
+  color: rgba(139, 94, 60, 0.5);
+}
+
+/* 卡片元信息：类型徽章 + 里程碑印章 */
+.win-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.win-type {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #94673e;
+  background: rgba(148, 103, 62, 0.12);
+  border-radius: 999px;
+  padding: 0.25rem 0.9rem;
+  white-space: nowrap;
+}
+.win-milestone {
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  color: #fffefa;
+  background: #c23b22;
+  border-radius: 4px;
+  padding: 0.22rem 0.6rem;
+  white-space: nowrap;
+}
+
+/* 标题栏可点击：hover 提亮 */
+.win-head {
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+.win-head:hover {
+  filter: brightness(1.08);
+}
+.win-head:focus-visible {
+  outline: 2px solid #8b5e3c;
+  outline-offset: -2px;
+}
+
+/* 整卡可点击：hover 只加深阴影（不做位移），提示可查看完整详情 */
+.win-card {
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+}
+.win-card:hover {
+  box-shadow: 0 6px 18px rgba(60, 40, 20, 0.18);
+}
+
+/* ── 详情弹窗（方案 B）── */
+.tl-modal-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(30, 20, 10, 0.45);
+  backdrop-filter: blur(4px);
+}
+.tl-modal {
+  width: min(32rem, calc(100% - 3rem));
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #fffefa;
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(40, 25, 10, 0.32);
+  animation: tl-modal-in 0.22s ease;
+}
+@keyframes tl-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.tl-modal-head {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 1.3rem;
+  background: var(--hc, #8b5e3c);
+  color: #fffefa;
+}
+.tl-modal-num {
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.18);
+}
+.tl-modal-head-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.tl-modal-year {
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  opacity: 0.85;
+}
+.tl-modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.tl-modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  flex-shrink: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 254, 250, 0.4);
+  background: rgba(0, 0, 0, 0.14);
+  color: #fffefa;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.tl-modal-close:hover {
+  background: rgba(0, 0, 0, 0.28);
+}
+.tl-modal-body {
+  padding: 1.2rem 1.5rem;
+}
+.tl-modal-desc {
+  margin-top: 0.8rem;
+  font-size: 1.25rem;
+  line-height: 1.75;
+  color: #56524d;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .tl-modal {
+    animation-duration: 0.01ms;
+  }
   .arc-track {
     transition-duration: 0.01ms;
   }
