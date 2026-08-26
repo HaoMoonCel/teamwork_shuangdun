@@ -16,9 +16,11 @@
           刻符简介
         </h2>
         <span class="mt-4 mx-auto block h-[0.2rem] w-12 bg-gold"></span>
-        <p class="mt-5 mx-auto max-w-3xl text-base md:text-lg leading-relaxed text-ink-light">
-          双墩刻符出土于安徽蚌埠双墩遗址，距今约 7300 年，早于甲骨文约四千年。遗址共出土刻划符号
-          600 余件，本项目数字化收录其中 37 个代表字符，分天文、地理、动植物、生产生活与数字等类别。
+        <p class="mt-5 mx-auto max-w-2xl text-base md:text-lg leading-relaxed text-ink-light">
+          双墩刻符出土于安徽蚌埠双墩遗址，距今约
+          <strong class="font-serif font-bold text-terracotta">7300 年</strong>，早于甲骨文约四千年。遗址共出土刻划符号
+          <strong class="font-serif font-bold text-terracotta">600 余件</strong>，本项目数字化收录其中
+          <strong class="font-serif font-bold text-terracotta">37 个</strong> 代表字符，分天文、地理、动植物、生产生活与数字等类别。
         </p>
       </header>
 

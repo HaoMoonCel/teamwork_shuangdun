@@ -40,12 +40,36 @@
 
     <!-- Batch download -->
     <div class="mt-12 pt-8 border-t border-border text-center">
-      <button class="btn-secondary" @click="downloadZip">
-        📥 批量导出 ZIP
+      <button class="btn-secondary inline-flex items-center gap-2" @click="downloadZip">
+        <svg
+          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+          stroke-linecap="round" stroke-linejoin="round"
+          class="h-4 w-4 shrink-0" aria-hidden="true"
+        >
+          <!-- 印章式双圈 -->
+          <circle cx="12" cy="12" r="10" opacity="0.55" />
+          <circle cx="12" cy="12" r="8.2" opacity="0.85" />
+          <!-- 向下箭头 + 托盘 -->
+          <path d="M12 5.8v6.2" />
+          <path d="M9 9.2l3 3 3-3" />
+          <path d="M8 15.2h8" />
+        </svg>
+        批量导出 ZIP
       </button>
-      <p class="text-xs text-ink-light mt-3 font-ui">
-        ⚠️
-        所有刻符图像资料仅供学术研究与科普传播使用，禁止用于商业用途。 引用时请注明“双墩刻符数据库”来源。
+      <p class="text-xs text-ink-light mt-3 font-ui flex items-center justify-center gap-2">
+        <svg
+          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+          stroke-linecap="round" stroke-linejoin="round"
+          class="h-5 w-5 shrink-0 text-seal" aria-hidden="true"
+        >
+          <!-- 印章式双圈 -->
+          <circle cx="12" cy="12" r="10" opacity="0.55" />
+          <circle cx="12" cy="12" r="8.2" opacity="0.85" />
+          <!-- 感叹号 -->
+          <path d="M12 6.8v5.4" />
+          <circle cx="12" cy="16.4" r="1.1" fill="currentColor" stroke="none" />
+        </svg>
+        <span>所有刻符图像资料仅供学术研究与科普传播使用，禁止用于商业用途。 引用时请注明“双墩刻符数据库”来源。</span>
       </p>
     </div>
 
